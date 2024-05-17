@@ -68,7 +68,7 @@
     <h2>Вхід до акаунту</h2>
     <form action="authorization" method="post">
         <label for="login">Логін:</label><br>
-        <label for="username"></label><input type="text" id="username" name="username"><br>
+        <input type="text" id="username" name="username"><br>
         <label for="password">Пароль:</label><br>
         <input type="password" id="password" name="password"><br>
         <span class="error">${errorMessage}</span><br>
@@ -77,7 +77,9 @@
     </form>
 
     <a href="registrationPage.jsp" class="button">Зареєструйтеся тут</a>
-    <a href="homePage" class="button">Повернутися на домашню сторінку</a>
+    <form action="homePage" method="get">
+        <input type="submit" id="" value="Повернутися на домашню сторінку">
+    </form>
 </div>
 </body>
 </html>

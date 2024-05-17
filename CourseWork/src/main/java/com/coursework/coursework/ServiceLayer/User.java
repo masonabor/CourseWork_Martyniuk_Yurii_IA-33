@@ -1,8 +1,6 @@
 package com.coursework.coursework.ServiceLayer;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.TreeSet;
 import java.util.UUID;
 
 public class User {

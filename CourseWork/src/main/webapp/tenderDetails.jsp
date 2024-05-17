@@ -83,7 +83,7 @@
 <div class="container">
     <div class="header">
         <c:if test="${not empty user}">
-            <p>Ви увійшли як: ${user.getLogin()}</p>
+            <p>Ви увійшли як: ${user.login}</p>
             <a href="userAccount.jsp" class="button">Кабінет користувача</a>
         </c:if>
         <c:if test="${empty user}">
@@ -93,29 +93,36 @@
 
     <h1>Деталі тендеру</h1>
     <div class="tender">
-        <h2>${tender.getName()}</h2>
-        <p>${tender.getDescription()}</p>
-        <p><fmt:formatNumber value="${tender.getCost()}" type="currency" currencySymbol="₴"/></p>
-        <p>${tender.getStatus()}</p>
+        <h2>${tender.name}</h2>
+        <p>${tender.description}</p>
+        <p><fmt:formatNumber value="${tender.cost}" type="currency" currencySymbol="₴"/></p>
+        <p>${tender.status}</p>
+        <c:if test="${not empty user and tender.authorId == user.userId}">
+            <a href="editTender.jsp?id=${tender.id}" class="button">Редагувати ваш тендер</a>
+        </c:if>
+        <c:if test="${not empty user and tender.authorId == user.userId}">
+            <a href="generateURL?id=${tender.id}" class="button">Згенерувати посилання на тендер</a>
+            <p>${URL}</p>
+        </c:if>
     </div>
 
     <span class="message">${proposalSuccess}</span><br>
     <span class="message">${successEditMessage}</span><br>
-    <a href="createProposal.jsp?id=${tender.getId()}" class="button">Створити пропозицію</a>
+    <a href="createProposal.jsp?id=${tender.id}" class="button">Створити пропозицію</a>
 
     <h2>Тендерні пропозиції</h2>
     <div class="proposals">
-        <c:if test="${not empty tender.getTenderProposals()}">
-            <c:forEach var="proposal" items="${tender.getTenderProposals()}">
+        <c:if test="${not empty tender.tenderProposals}">
+            <c:forEach var="proposal" items="${tender.tenderProposals}">
                 <div class="proposal">
-                    <h3>${proposal.getCompanyName()}</h3>
-                    <p>${proposal.getProposalDetails()}</p>
-                    <p>${proposal.getAuthor().getLogin()}</p>
-                    <p><fmt:formatNumber value="${proposal.getPrice()}" type="currency" currencySymbol="₴"/></p>
+                    <h3>${proposal.companyName}</h3>
+                    <p>${proposal.proposalDetails}</p>
+                    <p>${proposal.author.login}</p>
+                    <p><fmt:formatNumber value="${proposal.price}" type="currency" currencySymbol="₴"/></p>
                 </div>
             </c:forEach>
         </c:if>
-        <c:if test="${empty tender.getTenderProposals()}">
+        <c:if test="${empty tender.tenderProposals}">
             <h3>Немає тендерних пропозицій</h3>
         </c:if>
     </div>

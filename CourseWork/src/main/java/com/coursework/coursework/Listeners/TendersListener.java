@@ -19,9 +19,11 @@ public class TendersListener implements ServletContextListener {
         tendersDataBase = new TendersDAO();
 
         tendersDataBase.createTender("Створення Укрзалізниці", "В процесі", LocalDate.of(2024, 8, 17), 10000000, new User("Brigadir", "12345677"));
+        tendersDataBase.createTender("Купівля попкорну", "Треба 200000 тон попкорну", LocalDate.of(2024, 8, 17), 10000000, new User("Brigadir", "12345677"));
+        tendersDataBase.createTender("Створення Укрзалізниці", "В процесі", LocalDate.of(2024, 8, 17), 10000000, new User("Brigadir", "12345677"));
 
         context.getServletContext().setAttribute("tendersDataBase", tendersDataBase);
-        System.out.println("contextInitialized");
+        System.out.println("contextTenderInitialized");
     }
 
     @Override

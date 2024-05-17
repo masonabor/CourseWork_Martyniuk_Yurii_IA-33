@@ -20,8 +20,8 @@ public class AuthorizationServlet extends HttpServlet {
         usersDataBase = (UsersDAO) getServletContext().getAttribute("usersDataBase");
     }
 
+    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
         String username = request.getParameter("username");
         String password = request.getParameter("password");
         String addressing = request.getParameter("addressing");
@@ -32,10 +32,10 @@ public class AuthorizationServlet extends HttpServlet {
             if (user != null && user.getPassword().equals(password)) {
                 request.getSession().setAttribute("user", user);
                 if (addressing.equals("createTender")) {
-                    response.sendRedirect("createTender.jsp");
-                    return;
+                    request.getRequestDispatcher("createTender.jsp").forward(request, response);
+                } else {
+                    response.sendRedirect("homePage");
                 }
-                request.getRequestDispatcher("homePage").forward(request, response);
             } else {
                 request.setAttribute("errorMessage", "Неправильний логін або пароль");
                 request.getRequestDispatcher("loginPage.jsp").forward(request, response);
@@ -45,5 +45,5 @@ public class AuthorizationServlet extends HttpServlet {
             request.getRequestDispatcher("loginPage.jsp").forward(request, response);
         }
     }
-
 }
+

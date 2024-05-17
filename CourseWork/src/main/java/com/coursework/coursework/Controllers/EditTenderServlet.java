@@ -76,10 +76,10 @@ public class EditTenderServlet extends HttpServlet {
             return;
         }
 
-        tender.setName(name);
-        tender.setDescription(description);
-        tender.setDeadline(deadline);
-        tender.setCost(cost);
+        tender.updateName(name);
+        tender.updateDescription(description);
+        tender.updateDeadline(deadline);
+        tender.updateCost(cost);
 
         request.setAttribute("seccessEditMessage", "Тендер успішно оновлено");
         response.sendRedirect("tenderDetails.jsp?id=" + tender.getId());

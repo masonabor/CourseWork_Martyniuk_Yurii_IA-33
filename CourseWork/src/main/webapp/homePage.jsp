@@ -53,7 +53,58 @@
       display: inline-block;
       margin-bottom: 20px;
     }
+    #keyword {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    #tenderList {
+      list-style: none;
+      padding: 0;
+    }
+    #tenderList li {
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      margin-bottom: 5px;
+      cursor: pointer;
+    }
+    #tenderList li:hover {
+      background-color: #f0f0f0;
+    }
   </style>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      $("#keyword").keyup(function() {
+        let query = $(this).val();
+        if (query.length > 2) {
+          $.ajax({
+            url: 'searchTender',
+            method: 'GET',
+            data: { keyword: query },
+            success: function(response) {
+              $("#tenderList").empty();
+              let tenders = JSON.parse(response);
+              tenders.forEach(function(tender) {
+                let listItem = $("<li></li>").text(tender.name);
+                listItem.data("id", tender.id);
+                listItem.click(function() {
+                  let tenderId = $(this).data("id");
+                  window.location.href = "tenderDetails.jsp?id=" + tenderId;
+                });
+                $("#tenderList").append(listItem);
+              });
+            }
+          });
+        } else {
+          $("#tenderList").empty();
+        }
+      });
+    });
+  </script>
 </head>
 <body>
 
@@ -73,17 +124,22 @@
   </div>
 
   <h1>Список тендерів</h1>
+  <label for="keyword">
+    <input type="text" id="keyword" placeholder="Введіть ключове слово для пошуку">
+  </label>
+  <ul id="tenderList"></ul>
+
   <div class="tenders">
     <c:forEach var="tenderEntry" items="${tenders}">
       <div class="tender">
         <c:set var="tenderId" value="${tenderEntry.key}" />
-        <h2>${tenderEntry.value.getName()}</h2>
-        <p>${tenderEntry.value.getAuthor()}</p>
-        <p>${tenderEntry.value.getDescription()}</p>
-        <p><fmt:formatNumber value="${tenderEntry.value.getCost()}" type="currency" currencySymbol="₴"/></p>
+        <h2>${tenderEntry.value.name}</h2>
+        <p>${tenderEntry.value.getAuthor().login}</p>
+        <p>${tenderEntry.value.description}</p>
+        <p><fmt:formatNumber value="${tenderEntry.value.cost}" type="currency" currencySymbol="₴"/></p>
         <a href="tenderDetails.jsp?id=${tenderId}" class="button">Деталі тендеру</a>
         <a href="createProposal.jsp?id=${tenderId}" class="button">Створити пропозицію</a>
-        <c:if test="${tender.getAuthorId() == user.getUserId()}">
+        <c:if test="${tenderEntry.value.getAuthorId() == user.getUserId()}">
           <a href="editTender.jsp?id=${tenderId}" class="button">Редагувати ваш тендер</a>
         </c:if>
       </div>

@@ -77,15 +77,15 @@ public class Tender {
         this.id = id;
     }
 
-    public void setName(String name) {
+    public void updateName(String name) {
         this.name = name;
     }
 
-    public void setDescription(String description) {
+    public void updateDescription(String description) {
         this.description = description;
     }
 
-    public void setDeadline(LocalDate deadline) {
+    public void updateDeadline(LocalDate deadline) {
         this.deadline = deadline;
     }
 
@@ -93,7 +93,7 @@ public class Tender {
         this.tenderProposals = tenderProposals;
     }
 
-    public void setCost(double cost) {
+    public void updateCost(double cost) {
         this.cost = cost;
     }
 
@@ -101,14 +101,13 @@ public class Tender {
         return status;
     }
 
-    public void setStatus(Status status) {
+    public void updateStatus(Status status) {
         this.status = status;
     }
 
     public void addTenderProposal(TenderProposal proposal) {
         tenderProposals.add(proposal);
     }
-
 
     public enum Status {
         ACTIVE, INACTIVE;

@@ -83,7 +83,7 @@ public class ActionsWithAccountServlet extends HttpServlet {
         if (user != null) {
             if (action.equals("logout")) {
                 request.getSession().invalidate();
-                response.sendRedirect("homePage.jsp");
+                response.sendRedirect("homePage");
 
             } else if (action.equals("delete") && usersDataBase.isRegisteredUser(user.getLogin())) {
                 usersDataBase.deleteUser(user);

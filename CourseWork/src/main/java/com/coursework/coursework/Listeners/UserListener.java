@@ -23,7 +23,7 @@ public class UserListener implements ServletContextListener {
         usersDataBase.createUser("Belyi", "team123");
 
         context.getServletContext().setAttribute("usersDataBase", usersDataBase);
-        System.out.println("contextInitialized");
+        System.out.println("contextUserInitialized");
     }
 
     @Override

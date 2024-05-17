@@ -79,21 +79,37 @@
 </head>
 <body>
 <h2>Інформація про користувача</h2>
-<p>Логін: ${user.getLogin()}</p>
+<p>Логін: ${user.login}</p>
 
-<%--<h3>Тендери</h3>--%>
-<%--<c:forEach var="tender" items="${user.tenders}">--%>
-<%--    <p>${tender.name}</p>--%>
-<%--    <!-- Додайте інші дані тендера, які ви хочете відобразити -->--%>
-<%--</c:forEach>--%>
+<h3>Тендери</h3>
+<c:if test="${empty user.tenders}">
+    <h2>У вас поки немає тендерів</h2>
+</c:if>
+<c:forEach var="tenderEntry" items="${user.tenders}">
+    <div class="tender">
+        <c:set var="tenderId" value="${tenderEntry.key}" />
+        <h2>${tenderEntry.value.name}</h2>
+        <p>${tenderEntry.value.getAuthor().login}</p>
+        <p>${tenderEntry.value.description}</p>
+        <p><fmt:formatNumber value="${tenderEntry.value.cost}" type="currency" currencySymbol="₴"/></p>
+        <a href="tenderDetails.jsp?id=${tenderId}" class="button">Деталі тендеру</a>
+        <a href="createProposal.jsp?id=${tenderId}" class="button">Створити пропозицію</a>
+        <c:if test="${tenderEntry.value.getAuthorId() == user.getUserId()}">
+            <a href="editTender.jsp?id=${tenderId}" class="button">Редагувати ваш тендер</a>
+        </c:if>
+    </div>
+</c:forEach>
 
-<%--<h3>Тендерні пропозиції</h3>--%>
-<%--<c:forEach var="proposal" items="${user.tenderProposals}">--%>
-<%--    <p>${proposal.name}</p>--%>
-<%--    <!-- Додайте інші дані тендерної пропозиції, які ви хочете відобразити -->--%>
-<%--</c:forEach>--%>
-
-<%--<!-- Форма для редагування логіна і т.д. -->--%>
+<h3>Тендерні пропозиції</h3>
+<c:if test="${empty user.tenderProposals}">
+    <h2>У вас поки немає пропозицій</h2>
+</c:if>
+<c:forEach var="proposal" items="${user.tenderProposals}">
+    <h2>${proposal.companyName}</h2>
+    <p>${proposal.proposalDetails}</p>
+    <p>${proposal.author.login}</p>
+    <p><fmt:formatNumber value="${proposal.price}" type="currency" currencySymbol="₴"/></p>
+</c:forEach>
 
 <form action="userActions" method="post">
     <h3>Редагування логіна</h3>
@@ -127,7 +143,7 @@
     <input type="submit" value="Видалити обліковий запис">
 </form>
 
-<a href="homePage.jsp" class="button">Повернутися на домашню сторінку</a>
+<a href="homePage" class="button">Повернутися на домашню сторінку</a>
 
 </body>
 </html>

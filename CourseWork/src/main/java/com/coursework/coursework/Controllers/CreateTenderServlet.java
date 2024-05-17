@@ -66,6 +66,7 @@ public class CreateTenderServlet extends HttpServlet {
 
         Tender tender = new Tender(name, description, deadline, cost, user);
         tendersDataBase.addTender(tender);
+        user.addTender(tender);
         response.sendRedirect("tenderDetails.jsp?id=" + tender.getId());
     }
 }
