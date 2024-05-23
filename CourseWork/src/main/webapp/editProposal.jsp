@@ -1,12 +1,13 @@
-<%@ page import="java.util.UUID" %>
-<%@ page import="com.coursework.coursework.ServiceLayer.User" %>
-<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<!DOCTYPE html>
+<%@ page import="java.util.UUID" %>
+<%@ page import="com.coursework.coursework.DAOs.TendersDAO" %>
+<%@ page import="com.coursework.coursework.ServiceLayer.Tender" %>
+<%@ page import="com.coursework.coursework.ServiceLayer.User" %>
+<%@ page import="com.coursework.coursework.ServiceLayer.TenderProposal" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <title>Створення тендерної пропозиції</title>
+    <title>Редагування пропозиції</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -22,7 +23,7 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
-        h1 {
+        h2 {
             text-align: center;
             color: #333;
         }
@@ -39,7 +40,8 @@
 
         input[type="text"],
         textarea,
-        input[type="number"] {
+        input[type="number"],
+        input[type="date"] {
             width: 100%;
             padding: 10px;
             margin-bottom: 10px;
@@ -65,7 +67,6 @@
         button[type="submit"]:hover {
             background-color: #0056b3;
         }
-
     </style>
 </head>
 <body>
@@ -73,16 +74,39 @@
     User user = (User) request.getSession().getAttribute("user");
 
     if (user == null) {
-        request.setAttribute("addressing", "createProposal");
-        request.setAttribute("tenderId", UUID.fromString(request.getParameter("id")));
-        request.getRequestDispatcher("loginPage.jsp").forward(request, response);
-        return;
+        response.sendError(500, "Ви не ввійшли");
     }
+
+    String id = request.getParameter("id");
+    String proposalId = request.getParameter("proposalId");
+
+    if (id != null && !id.isEmpty() && proposalId != null && !proposalId.isEmpty()) {
+        UUID tenderId = UUID.fromString(id);
+        UUID propId = UUID.fromString(proposalId);
+        TendersDAO tendersDAO = (TendersDAO) request.getServletContext().getAttribute("tendersDataBase");
+        Tender tender = tendersDAO.getTenderById(tenderId);
+
+        if (tender == null) {
+            response.sendError(500, "Тендер за таким id не знайдено");
+            return;
+        }
+
+        TenderProposal proposal = tender.findProposalById(propId);
+        request.setAttribute("proposal", proposal);
+
+    } else {
+        response.sendError(500, "Id тендеру відсутнє");
+    }
+
+
+
 %>
+
 <div class="container">
-    <h1>Створення тендерної пропозиції</h1>
-    <form action="createProposal" method="post">
-        <input type="hidden" name="id" value="${param.id}">
+    <h2>Редагування пропозиції</h2>
+    <form action="editProposal" method="post">
+        <input type="hidden" name="id" value="${proposal.tenderId}">
+        <input type="hidden" name="proposalId" value="${proposal.id}">
         <label for="companyName">Назва компанії:</label><br>
         <input type="text" id="companyName" name="companyName" required><br>
         <label for="proposalDetails">Деталі пропозиції:</label><br>
@@ -91,6 +115,13 @@
         <input type="number" id="price" name="price" step="1000.0" required><br>
         <button type="submit">Створити пропозицію</button>
     </form>
+
+    <form action="editProposal" method="get" onsubmit="return confirm('Ви впевнені, що хочете видалити цю пропозицію?');">
+        <input type="hidden" name="proposalId" value="${proposal.id}" />
+        <button type="submit">Видалити</button>
+    </form>
 </div>
+
 </body>
 </html>
+

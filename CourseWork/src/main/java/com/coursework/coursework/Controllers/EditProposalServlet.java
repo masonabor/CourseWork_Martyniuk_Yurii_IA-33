@@ -3,7 +3,6 @@ package com.coursework.coursework.Controllers;
 import com.coursework.coursework.DAOs.TendersDAO;
 import com.coursework.coursework.ServiceLayer.Tender;
 import com.coursework.coursework.ServiceLayer.TenderProposal;
-import com.coursework.coursework.ServiceLayer.User;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -12,8 +11,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.UUID;
 
-@WebServlet("/createProposal")
-public class CreateProposalServlet extends HttpServlet {
+@WebServlet("/editProposal")
+public class EditProposalServlet extends HttpServlet {
 
     private TendersDAO tendersDataBase;
 
@@ -25,14 +24,6 @@ public class CreateProposalServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        User user = (User) request.getSession().getAttribute("user");
-
-        if (user == null) {
-            request.setAttribute("errorMessage", "Для відгуку на тендер потрібно авторизуватися");
-            request.getRequestDispatcher("loginPage.jsp").forward(request, response);
-            return;
-        }
-
         UUID tenderId;
         try {
             tenderId = UUID.fromString(request.getParameter("id"));
@@ -41,8 +32,16 @@ public class CreateProposalServlet extends HttpServlet {
             return;
         }
 
-        String proposalDetails = request.getParameter("proposalDetails");
+        UUID proposalId;
+        try {
+            proposalId = UUID.fromString(request.getParameter("proposalId"));
+        } catch (NumberFormatException e) {
+            response.sendError(500, "Недійсний id пропозиції");
+            return;
+        }
+
         String companyName = request.getParameter("companyName");
+        String proposalDetails = request.getParameter("proposalDetails");
         double price;
 
         try {
@@ -60,6 +59,7 @@ public class CreateProposalServlet extends HttpServlet {
         }
 
         Tender tender = tendersDataBase.getTenderById(tenderId);
+
         if (tender == null) {
             response.sendError(404, "Тендер не знайдено");
             return;
@@ -70,11 +70,38 @@ public class CreateProposalServlet extends HttpServlet {
             return;
         }
 
-        TenderProposal proposal = new TenderProposal(tenderId, companyName, proposalDetails, price, user);
-        tender.addTenderProposal(proposal);
-        user.addTenderProposal(proposal);
+        TenderProposal proposal = tender.findProposalById(proposalId);
+        proposal.setCompanyName(companyName);
+        proposal.setProposalDetails(proposalDetails);
+        proposal.setPrice(price);
 
-        request.setAttribute("proposalSuccess", "Тендерну пропозицію успішно створено ");
-        request.getRequestDispatcher("tenderDetails.jsp?tenderId=" + tenderId).forward(request, response);
+        request.setAttribute("editProposalSuccess", "Тендерну пропозицію успішно оновлено");
+        request.getRequestDispatcher("userAccount.jsp").forward(request, response);
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        UUID tenderId;
+        try {
+            tenderId = UUID.fromString(request.getParameter("id"));
+        } catch (NumberFormatException e) {
+            response.sendError(500, "Недійсний id тендеру");
+            return;
+        }
+
+        UUID proposalId;
+        try {
+            proposalId = UUID.fromString(request.getParameter("proposalId"));
+        } catch (NumberFormatException e) {
+            response.sendError(500, "Недійсний id пропозиції");
+            return;
+        }
+
+        Tender tender = tendersDataBase.getTenderById(tenderId);
+        tender.deleteProposalById(proposalId);
+
+        request.setAttribute("editProposalSuccess", "Тендер успішно видалено");
+        request.getRequestDispatcher("userAccount.jsp").forward(request, response);
     }
 }

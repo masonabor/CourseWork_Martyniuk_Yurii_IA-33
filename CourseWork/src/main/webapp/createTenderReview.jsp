@@ -6,7 +6,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Створення тендеру</title>
+    <title>Відгук на тендер</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -70,26 +70,35 @@
 </head>
 <body>
 <%
+    String id = request.getParameter("id");
+
+    if (id != null && !id.isEmpty()) {
+        UUID tenderId = UUID.fromString(id);
+        request.setAttribute("tenderId", tenderId);
+    } else {
+        response.sendError(500, "Id тендеру відсутнє");
+    }
+
     User user = (User) request.getSession().getAttribute("user");
 
     if (user == null) {
-        request.setAttribute("addressing", "createTender");
+        request.setAttribute("addressing", "review");
+        request.setAttribute("tenderId", UUID.fromString(request.getParameter("id")));
         request.getRequestDispatcher("loginPage.jsp").forward(request, response);
         return;
     }
-%>
+ %>
 <div class="container">
-    <h1>Створення тендеру</h1>
-    <form action="createTender" method="post">
-        <label for="tenderName">Назва тендеру:</label><br>
-        <input type="text" id="tenderName" name="tenderName" required><br>
-        <label for="tenderDescription">Опис тендеру:</label><br>
-        <textarea id="tenderDescription" name="tenderDescription" rows="4" required></textarea><br>
-        <label for="tenderDeadline">Кінцевий термін:</label><br>
-        <input type="date" id="tenderDeadline" name="tenderDeadline" required><br>
-        <label for="tenderCost">Вартість:</label><br>
-        <input type="number" id="tenderCost" name="tenderCost" step="1000.0" required><br>
-        <button type="submit">Створити тендер</button>
+    <h1>Відгук на тендер</h1>
+    <form action="createReview" method="get">
+        <input type="hidden" id="tenderId" name="tenderId" value="${tenderId}">
+        <label for="companyName">Назва компанії:</label><br>
+        <input type="text" id="companyName" name="companyName" required><br>
+        <label for="review">Перелік власних компетенцій:</label><br>
+        <textarea id="review" name="review" rows="4" required></textarea><br>
+        <label for="phoneNumber">Номер телефону:</label><br>
+        <input type="text" id="phoneNumber" name="phoneNumber" required><br>
+        <button type="submit">Надіслати відгук</button>
     </form>
 </div>
 </body>

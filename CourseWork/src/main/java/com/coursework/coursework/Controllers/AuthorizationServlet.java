@@ -31,11 +31,24 @@ public class AuthorizationServlet extends HttpServlet {
 
             if (user != null && user.getPassword().equals(password)) {
                 request.getSession().setAttribute("user", user);
+
                 if (addressing.equals("createTender")) {
                     request.getRequestDispatcher("createTender.jsp").forward(request, response);
-                } else {
-                    response.sendRedirect("homePage");
+                    return;
                 }
+                if (addressing.equals("review")) {
+                    String tenderId = request.getParameter("tenderId");
+                    request.getRequestDispatcher("createTenderReview.jsp?id=" + tenderId).forward(request, response);
+                    return;
+                }
+                if (addressing.equals("createProposal")) {
+                    String tenderId = request.getParameter("tenderId");
+                    request.getRequestDispatcher("createProposal.jsp?id=" + tenderId).forward(request, response);
+                    return;
+                }
+
+                response.sendRedirect("homePage");
+
             } else {
                 request.setAttribute("errorMessage", "Неправильний логін або пароль");
                 request.getRequestDispatcher("loginPage.jsp").forward(request, response);

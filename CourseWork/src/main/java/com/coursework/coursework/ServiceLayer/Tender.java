@@ -15,6 +15,7 @@ public class Tender {
     private Status status;
 
     private ArrayList<TenderProposal> tenderProposals;
+    private ArrayList<TenderReview> tenderReviews;
 
     public Tender(String name, String description, LocalDate deadline, double cost) {
         this.id = UUID.randomUUID();
@@ -22,6 +23,7 @@ public class Tender {
         this.description = description;
         this.deadline = deadline;
         this.tenderProposals = new ArrayList<>();
+        this.tenderReviews = new ArrayList<>();
         this.cost = cost;
         this.status = Status.ACTIVE;
     }
@@ -32,6 +34,7 @@ public class Tender {
         this.description = description;
         this.deadline = deadline;
         this.tenderProposals = new ArrayList<>();
+        this.tenderReviews = new ArrayList<>();
         this.cost = cost;
         this.author = user;
         this.status = Status.ACTIVE;
@@ -47,6 +50,14 @@ public class Tender {
 
     public UUID getAuthorId() {
         return author.getUserId();
+    }
+
+    public ArrayList<TenderReview> getTenderReviews() {
+        return tenderReviews;
+    }
+
+    public void setTenderReviews(ArrayList<TenderReview> tenderReviews) {
+        this.tenderReviews = tenderReviews;
     }
 
     public double getCost() {
@@ -107,6 +118,23 @@ public class Tender {
 
     public void addTenderProposal(TenderProposal proposal) {
         tenderProposals.add(proposal);
+    }
+
+    public void addTenderReview(TenderReview review) {
+        tenderReviews.add(review);
+    }
+
+    public TenderProposal findProposalById(UUID proposalId) {
+        for (TenderProposal proposal: tenderProposals) {
+            if (proposal.getId() == proposalId) {
+                return proposal;
+            }
+        }
+        return null;
+    }
+
+    public void deleteProposalById(UUID proposalId) {
+        tenderProposals.remove(findProposalById(proposalId));
     }
 
     public enum Status {

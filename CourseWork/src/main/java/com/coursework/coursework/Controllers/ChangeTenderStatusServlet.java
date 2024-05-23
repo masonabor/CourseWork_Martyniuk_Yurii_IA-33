@@ -41,8 +41,8 @@ public class ChangeTenderStatusServlet extends HttpServlet {
             return;
         }
 
-        if (tendersDataBase.isTenderInDataBase(tenderId)) {
-            response.sendError(400, "Тендер з таким id відсутній у базі даних");
+        if (!tendersDataBase.isTenderInDataBase(tenderId)) {
+            response.sendError(400, "Тендер з таким id відсутній у базі даних"); // тут проблема
         }
 
         Tender tender = tendersDataBase.getTenderById(tenderId);
@@ -55,6 +55,8 @@ public class ChangeTenderStatusServlet extends HttpServlet {
         if (newStatus.equals("activate")) {
             tender.updateStatus(Tender.Status.ACTIVE);
         } else tender.updateStatus(Tender.Status.INACTIVE);
+
+        request.getRequestDispatcher("tenderDetails.jsp?id=" + tenderId);
     }
 
 }

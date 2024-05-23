@@ -3,6 +3,7 @@
 <%@ page import="com.coursework.coursework.DAOs.TendersDAO" %>
 <%@ page import="com.coursework.coursework.ServiceLayer.Tender" %>
 <%@ page import="com.coursework.coursework.ServiceLayer.Tender.Status" %>
+<%@ page import="com.coursework.coursework.ServiceLayer.User" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html>
 <head>
@@ -70,6 +71,12 @@
 </head>
 <body>
 <%
+    User user = (User) request.getSession().getAttribute("user");
+
+    if (user == null) {
+        response.sendError(500, "ви не ввійшли");
+    }
+
     String id = request.getParameter("id");
 
     if (id != null && !id.isEmpty()) {
@@ -81,6 +88,12 @@
             response.sendError(500, "Тендер за таким id не знайдено");
         } else {
             request.setAttribute("tender", tender);
+        }
+
+        assert tender != null;
+
+        if (user != tender.getAuthor()) {
+            response.sendError(500, "ви не є власником тендеру");
         }
     } else {
         response.sendError(500, "Id тендеру відсутнє");
@@ -110,16 +123,14 @@
     <form action="changeTenderStatus" method="get">
         <input type="hidden" name="id" value="${tender.id}" />
         <button type="submit">
-            <c:choose>
-                <c:when test="${tender.status == Status.ACTIVE}">
-                    Деактивувати
-                    <input type="hidden" name="newStatus" value="deactivate" />
-                </c:when>
-                <c:otherwise>
-                    Активувати
-                    <input type="hidden" name="newStatus" value="activate" />
-                </c:otherwise>
-            </c:choose>
+            <c:if test="${tender.status == Status.INACTIVE}">
+                Активувати
+                <input type="hidden" name="newStatus" value="activate" />
+            </c:if>
+            <c:if test="${tender.status ne Status.INACTIVE}">
+                Деактивувати
+                <input type="hidden" name="newStatus" value="deactivate" />
+            </c:if>
         </button>
     </form>
 </div>

@@ -72,6 +72,7 @@
         <label for="password">Пароль:</label><br>
         <input type="password" id="password" name="password"><br>
         <span class="error">${errorMessage}</span><br>
+        <input type="hidden" id="tenderId" name="tenderId" value="${tenderId}">
         <input type="hidden" id="addressing" name="addressing" value="${addressing}">
         <input type="submit" id="login" value="Увійти">
     </form>

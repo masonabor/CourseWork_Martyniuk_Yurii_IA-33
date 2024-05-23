@@ -5,6 +5,7 @@ import com.coursework.coursework.ServiceLayer.User;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class TendersDAO {
     private Map<UUID, Tender> tendersDataBase = new HashMap<>();
@@ -44,5 +45,11 @@ public class TendersDAO {
             tendersDataBase.remove(id);
             return true;
         } else return false;
+    }
+
+    public synchronized List<Tender> searchTenders(String keyword) {
+        return tendersDataBase.values().stream()
+                .filter(tender -> tender.getName().toLowerCase().contains(keyword.toLowerCase()))
+                .collect(Collectors.toList());
     }
 }

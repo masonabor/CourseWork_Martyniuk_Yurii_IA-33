@@ -98,6 +98,7 @@
         <p><fmt:formatNumber value="${tender.cost}" type="currency" currencySymbol="₴"/></p>
         <p>${tender.status}</p>
         <c:if test="${not empty user and tender.authorId == user.userId}">
+            <a href="checkReviews.jsp?id=${tender.id}" class="button">Переглянути відгуки</a>
             <a href="editTender.jsp?id=${tender.id}" class="button">Редагувати ваш тендер</a>
         </c:if>
         <c:if test="${not empty user and tender.authorId == user.userId}">
@@ -108,8 +109,9 @@
 
     <span class="message">${proposalSuccess}</span><br>
     <span class="message">${successEditMessage}</span><br>
-    <a href="createProposal.jsp?id=${tender.id}" class="button">Створити пропозицію</a>
-
+    <c:if test="${(empty user) or (user.userId ne tender.authorId)}">
+        <a href="createProposal.jsp?id=${tender.id}" class="button">Створити пропозицію</a>
+    </c:if>
     <h2>Тендерні пропозиції</h2>
     <div class="proposals">
         <c:if test="${not empty tender.tenderProposals}">
