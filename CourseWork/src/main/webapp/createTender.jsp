@@ -1,5 +1,4 @@
 <%@ page import="com.coursework.coursework.ServiceLayer.User" %>
-<%@ page import="java.util.UUID" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
@@ -10,51 +9,49 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f2f2f2;
+            background-color: #222;
+            color: #ddd;
+            margin: 0;
+            padding: 0;
         }
-
         .container {
             max-width: 600px;
-            margin: 0 auto;
+            margin: 20px auto;
             padding: 20px;
-            background-color: #fff;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background-color: #333;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
         }
-
         h1 {
             text-align: center;
-            color: #333;
+            color: #fff;
         }
-
         form {
             margin-top: 20px;
         }
-
         label {
             display: block;
             margin-bottom: 5px;
-            color: #666;
+            color: #bbb;
         }
-
         input[type="text"],
         textarea,
         input[type="number"],
         input[type="date"] {
-            width: 100%;
+            width: calc(100% - 22px);
             padding: 10px;
             margin-bottom: 10px;
-            border: 1px solid #ccc;
+            border: 1px solid #555;
             border-radius: 5px;
+            background-color: #444;
+            color: #fff;
             box-sizing: border-box;
         }
-
         textarea {
             resize: vertical;
         }
-
         button[type="submit"] {
-            background-color: #007bff;
+            background-color: #008CBA;
             color: #fff;
             border: none;
             padding: 10px 20px;
@@ -62,9 +59,8 @@
             cursor: pointer;
             transition: background-color 0.3s;
         }
-
         button[type="submit"]:hover {
-            background-color: #0056b3;
+            background-color: #005f7f;
         }
     </style>
 </head>
@@ -81,16 +77,17 @@
 <div class="container">
     <h1>Створення тендеру</h1>
     <form action="createTender" method="post">
-        <label for="tenderName">Назва тендеру:</label><br>
-        <input type="text" id="tenderName" name="tenderName" required><br>
-        <label for="tenderDescription">Опис тендеру:</label><br>
-        <textarea id="tenderDescription" name="tenderDescription" rows="4" required></textarea><br>
-        <label for="tenderDeadline">Кінцевий термін:</label><br>
-        <input type="date" id="tenderDeadline" name="tenderDeadline" required><br>
-        <label for="tenderCost">Вартість:</label><br>
-        <input type="number" id="tenderCost" name="tenderCost" step="1000.0" required><br>
+        <label for="tenderName">Назва тендеру:</label>
+        <input type="text" id="tenderName" name="tenderName" required>
+        <label for="tenderDescription">Опис тендеру:</label>
+        <textarea id="tenderDescription" name="tenderDescription" rows="4" required></textarea>
+        <label for="tenderDeadline">Кінцевий термін:</label>
+        <input type="date" id="tenderDeadline" name="tenderDeadline" required>
+        <label for="tenderCost">Вартість:</label>
+        <input type="number" id="tenderCost" name="tenderCost" step="1000.0" required>
         <button type="submit">Створити тендер</button>
     </form>
 </div>
 </body>
 </html>
+

@@ -1,8 +1,9 @@
-package com.coursework.coursework.Controllers;
+package com.coursework.coursework.Controllers.ProposalControllers;
 
 import com.coursework.coursework.DAOs.TendersDAO;
 import com.coursework.coursework.ServiceLayer.Tender;
 import com.coursework.coursework.ServiceLayer.TenderProposal;
+import com.coursework.coursework.ServiceLayer.User;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -24,19 +25,28 @@ public class EditProposalServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        UUID tenderId;
-        try {
-            tenderId = UUID.fromString(request.getParameter("id"));
-        } catch (NumberFormatException e) {
-            response.sendError(500, "Недійсний id тендеру");
+        String tenderIdStr = request.getParameter("tenderId");
+        String proposalIdStr = request.getParameter("proposalId");
+
+        if (tenderIdStr == null || proposalIdStr == null) {
+            response.sendError(400, "ID тендеру або пропозиції не вказано");
             return;
         }
 
-        UUID proposalId;
-        try {
-            proposalId = UUID.fromString(request.getParameter("proposalId"));
-        } catch (NumberFormatException e) {
-            response.sendError(500, "Недійсний id пропозиції");
+        UUID tenderId = UUID.fromString(tenderIdStr);
+        UUID proposalId = UUID.fromString(proposalIdStr);
+
+        Tender tender = tendersDataBase.getTenderById(tenderId);
+
+        if (tender == null) {
+            response.sendError(400, "Тендер не знайдено");
+            return;
+        }
+
+        TenderProposal proposal = tender.findProposalById(proposalId);
+
+        if (proposal == null) {
+            response.sendError(400, "Пропозицію не знайдено");
             return;
         }
 
@@ -48,29 +58,22 @@ public class EditProposalServlet extends HttpServlet {
             price = Double.parseDouble(request.getParameter("price"));
         } catch (NumberFormatException e) {
             request.setAttribute("errorProposal", "Недійсна ціна");
-            request.getRequestDispatcher("createProposal.jsp").forward(request, response);
+            request.getRequestDispatcher("editProposal.jsp").forward(request, response);
             return;
         }
 
         if (companyName.isEmpty()) {
             request.setAttribute("errorProposal", "Назва компанії повинна бути заповнена");
-            request.getRequestDispatcher("createProposal.jsp").forward(request, response);
+            request.getRequestDispatcher("editProposal.jsp").forward(request, response);
             return;
         }
 
-        Tender tender = tendersDataBase.getTenderById(tenderId);
-
-        if (tender == null) {
-            response.sendError(404, "Тендер не знайдено");
-            return;
-        }
         if (price > tender.getCost()) {
             request.setAttribute("errorProposal", "Ціна пропозиції повинна бути меншою, ніж бюджет на тендер");
-            request.getRequestDispatcher("createProposal.jsp").forward(request, response);
+            request.getRequestDispatcher("editProposal.jsp").forward(request, response);
             return;
         }
 
-        TenderProposal proposal = tender.findProposalById(proposalId);
         proposal.setCompanyName(companyName);
         proposal.setProposalDetails(proposalDetails);
         proposal.setPrice(price);
@@ -82,26 +85,36 @@ public class EditProposalServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        UUID tenderId;
-        try {
-            tenderId = UUID.fromString(request.getParameter("id"));
-        } catch (NumberFormatException e) {
-            response.sendError(500, "Недійсний id тендеру");
+        String tenderIdStr = request.getParameter("tenderId");
+        String proposalIdStr = request.getParameter("proposalId");
+
+        if (tenderIdStr == null || proposalIdStr == null) {
+            response.sendError(400, "ID тендеру або пропозиції не вказано");
             return;
         }
 
-        UUID proposalId;
-        try {
-            proposalId = UUID.fromString(request.getParameter("proposalId"));
-        } catch (NumberFormatException e) {
-            response.sendError(500, "Недійсний id пропозиції");
-            return;
-        }
+        UUID tenderId = UUID.fromString(tenderIdStr);
+        UUID proposalId = UUID.fromString(proposalIdStr);
 
         Tender tender = tendersDataBase.getTenderById(tenderId);
-        tender.deleteProposalById(proposalId);
 
-        request.setAttribute("editProposalSuccess", "Тендер успішно видалено");
+        if (tender == null) {
+            response.sendError(400, "Тендер не знайдено");
+            return;
+        }
+
+        TenderProposal proposal = tender.findProposalById(proposalId);
+
+        if (proposal == null) {
+            response.sendError(400, "Пропозицію не знайдено");
+            return;
+        }
+
+        User user = (User) request.getSession().getAttribute("user");
+        tender.deleteProposalById(proposal.getId(), user);
+        user.deleteUserProposal(proposal);
+
+        request.setAttribute("editProposalSuccess", "Пропозицію успішно видалено");
         request.getRequestDispatcher("userAccount.jsp").forward(request, response);
     }
 }

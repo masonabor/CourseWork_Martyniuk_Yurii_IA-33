@@ -1,4 +1,4 @@
-package com.coursework.coursework.Controllers;
+package com.coursework.coursework.Controllers.HomePageControllers;
 
 import com.coursework.coursework.DAOs.TendersDAO;
 import com.coursework.coursework.ServiceLayer.Tender;

@@ -1,4 +1,4 @@
-package com.coursework.coursework.Controllers;
+package com.coursework.coursework.Controllers.TenderControllers;
 
 
 import com.coursework.coursework.DAOs.TendersDAO;
@@ -56,7 +56,7 @@ public class ChangeTenderStatusServlet extends HttpServlet {
             tender.updateStatus(Tender.Status.ACTIVE);
         } else tender.updateStatus(Tender.Status.INACTIVE);
 
-        request.getRequestDispatcher("tenderDetails.jsp?id=" + tenderId);
+        response.sendRedirect("tenderDetails.jsp?id=" + tenderId);
     }
 
 }

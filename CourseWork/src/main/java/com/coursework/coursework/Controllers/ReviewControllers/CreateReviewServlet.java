@@ -1,4 +1,4 @@
-package com.coursework.coursework.Controllers;
+package com.coursework.coursework.Controllers.ReviewControllers;
 
 import com.coursework.coursework.DAOs.TendersDAO;
 import com.coursework.coursework.ServiceLayer.Tender;
@@ -30,18 +30,17 @@ public class CreateReviewServlet extends HttpServlet {
 
         User user = (User) request.getSession().getAttribute("user");
 
-        UUID tenderId;
+        String id = request.getParameter("tenderId");
 
-        try {
-            tenderId = UUID.fromString(request.getParameter("tenderId"));
-        } catch (NumberFormatException e) {
+        if (id == null) {
             response.sendError(500, "Недійсний id тендеру");
             return;
         }
 
+        UUID tenderId = UUID.fromString(id);
         String companyName= request.getParameter("companyName");
 
-        if (companyName.isEmpty()) {
+        if (companyName == null || companyName.isEmpty()) {
             request.setAttribute("errorReview", "Назва компанії повинна бути заповнена");
             request.getRequestDispatcher("createTenderReview.jsp").forward(request, response);
             return;
@@ -49,14 +48,8 @@ public class CreateReviewServlet extends HttpServlet {
 
         String review = request.getParameter("review");
 
-        if (review.isEmpty()) {
+        if (review == null || review.isEmpty()) {
             request.setAttribute("errorReview", "Поле відгуку пусте");
-            request.getRequestDispatcher("createTenderReview.jsp").forward(request, response);
-            return;
-        }
-
-        if (review.length() < 100) {
-            request.setAttribute("errorReview", "Відгук повинен бути більше 100 символів");
             request.getRequestDispatcher("createTenderReview.jsp").forward(request, response);
             return;
         }
@@ -79,6 +72,7 @@ public class CreateReviewServlet extends HttpServlet {
         TenderReview tenderReview = new TenderReview(tenderId, user.getUserId(), review, phoneNumber, companyName);
         tender.addTenderReview(tenderReview);
 
+        request.setAttribute("successReviewMessage", "Відгук успішно створено");
         request.getRequestDispatcher("homePage").forward(request, response);
     }
 

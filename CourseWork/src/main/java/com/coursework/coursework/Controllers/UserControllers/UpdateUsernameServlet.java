@@ -1,4 +1,4 @@
-package com.coursework.coursework.Controllers;
+package com.coursework.coursework.Controllers.UserControllers;
 
 import com.coursework.coursework.DAOs.UsersDAO;
 import com.coursework.coursework.ServiceLayer.User;
@@ -9,14 +9,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebServlet("/updatePassword")
-public class UpdatePasswordServlet extends HttpServlet {
+@WebServlet("/updateUsername")
+public class UpdateUsernameServlet extends HttpServlet {
 
     private UsersDAO usersDataBase;
 
     @Override
-    public void init() throws ServletException {
-        super.init();
+    public void init() {
         usersDataBase = (UsersDAO) getServletContext().getAttribute("usersDataBase");
     }
 
@@ -32,19 +31,21 @@ public class UpdatePasswordServlet extends HttpServlet {
 
         if (user != null) {
 
-            String newPassword = request.getParameter("newPassword");
+            String newUsername = request.getParameter("newUsername");
 
-            if (newPassword != null && !newPassword.isEmpty() && !usersDataBase.isRegisteredUser(user.getLogin())) {
-                user.setPassword(newPassword);
+            if (newUsername != null && !newUsername.isEmpty() && !usersDataBase.isRegisteredUser(newUsername)) {
+                user.setLogin(newUsername);
                 request.getSession().setAttribute("user", user);
-                request.setAttribute("passwordMessage", "Пароль успішно змінений");
+                request.setAttribute("usernameMessage", "Логін успішно змінений");
 
             } else {
-                if (newPassword == null) {
-                    request.setAttribute("passwordError", "Ви не ввели новий пароль");
+                if (newUsername == null || newUsername.isEmpty()) {
+                    request.setAttribute("usernameError", "Ви не ввели новий логін");
+                } else {
+                    request.setAttribute("usernameError", "Цей логін вже зайнятий");
                 }
             }
-            request.getRequestDispatcher("userAccount.jsp").forward(request, response);
+            request.getRequestDispatcher("editUser.jsp").forward(request, response);
 
         } else {
             response.sendError(500, "Об'єкт користувача нульовий");

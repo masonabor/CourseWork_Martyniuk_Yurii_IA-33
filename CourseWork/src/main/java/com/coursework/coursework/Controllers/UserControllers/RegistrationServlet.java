@@ -1,15 +1,12 @@
-package com.coursework.coursework.Controllers;
+package com.coursework.coursework.Controllers.UserControllers;
 
 import com.coursework.coursework.DAOs.UsersDAO;
-import com.coursework.coursework.ServiceLayer.PasswordGeneration;
-import com.coursework.coursework.ServiceLayer.User;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import com.coursework.coursework.ServiceLayer.PasswordGeneration.*;
 
 @WebServlet("/registration")
 public class RegistrationServlet extends HttpServlet {
@@ -17,8 +14,7 @@ public class RegistrationServlet extends HttpServlet {
     private UsersDAO usersDataBase;
 
     @Override
-    public void init() throws ServletException {
-        super.init();
+    public void init() {
         usersDataBase = (UsersDAO) getServletContext().getAttribute("usersDataBase");
     }
 
@@ -32,8 +28,7 @@ public class RegistrationServlet extends HttpServlet {
             request.setAttribute("errorMessage", "Користувач з таким логіном зареєстрований");
             request.getRequestDispatcher("registrationPage.jsp").forward(request, response);
         } else {
-            User user = new User(username, password);
-            usersDataBase.addUser(user);
+            usersDataBase.createUser(username, password);
             request.setAttribute("successMessage", "Ви успішно зареєструвалися");
             request.getRequestDispatcher("registrationPage.jsp").forward(request, response);
         }

@@ -8,41 +8,49 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f2f2f2;
+            background-color: #222;
+            color: #ddd;
+            margin: 0;
+            padding: 0;
         }
         .container {
             width: 300px;
-            margin: 0 auto;
+            margin: 50px auto;
             padding: 20px;
-            background-color: #fff;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background-color: #333;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+        h2 {
+            text-align: center;
+            color: #ddd;
+        }
+        label {
+            color: #ddd;
         }
         input[type="text"], input[type="password"] {
-            width: 100%;
+            width: calc(100% - 24px);
             padding: 10px;
-            margin: 5px 0;
-            border: 1px solid #ccc;
-            border-radius: 3px;
+            margin: 5px 0 20px;
+            border: 1px solid #555;
+            border-radius: 5px;
+            background-color: #444;
+            color: #fff;
             box-sizing: border-box;
         }
         input[type="submit"] {
             width: 100%;
             padding: 10px;
             margin-top: 10px;
-            background-color: #4CAF50;
+            background-color: #008CBA;
             color: white;
             border: none;
-            border-radius: 3px;
+            border-radius: 5px;
             cursor: pointer;
             transition: background-color 0.3s;
         }
         input[type="submit"]:hover {
-            background-color: #45a049;
-        }
-        .error {
-            color: red;
-            margin-top: 5px;
+            background-color: #005f7f;
         }
         .button {
             height: 35px;
@@ -61,13 +69,24 @@
         .button:hover {
             background-color: #005f7f;
         }
+        .error {
+            color: red;
+            margin-top: 5px;
+        }
+        .back-button {
+            margin-top: 20px;
+            background-color: #444;
+        }
+        .back-button:hover {
+            background-color: #555;
+        }
     </style>
 </head>
 <body>
 <div class="container">
     <h2>Вхід до акаунту</h2>
     <form action="authorization" method="post">
-        <label for="login">Логін:</label><br>
+        <label for="username">Логін:</label><br>
         <input type="text" id="username" name="username"><br>
         <label for="password">Пароль:</label><br>
         <input type="password" id="password" name="password"><br>
@@ -79,8 +98,9 @@
 
     <a href="registrationPage.jsp" class="button">Зареєструйтеся тут</a>
     <form action="homePage" method="get">
-        <input type="submit" id="" value="Повернутися на домашню сторінку">
+        <input type="submit" class="back-button" value="Повернутися на домашню сторінку">
     </form>
 </div>
 </body>
 </html>
+

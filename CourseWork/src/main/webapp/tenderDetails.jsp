@@ -13,33 +13,41 @@
     <style>
         body {
             font-family: Arial, sans-serif;
+            background-color: #222;
+            color: #ddd;
+            margin: 0;
+            padding: 0;
         }
         .container {
             max-width: 800px;
-            margin: 0 auto;
+            margin: 20px auto;
             padding: 20px;
+            background-color: #333;
+            border-radius: 8px;
         }
         .header {
             text-align: right;
             margin-bottom: 20px;
         }
         .header a {
+            color: #fff;
             text-decoration: none;
-            color: blue;
+            padding: 10px 20px;
+            background-color: #444;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            display: inline-block;
+            margin-bottom: 10px;
         }
         .header a:hover {
-            text-decoration: underline;
+            background-color: #555;
         }
-        .tender {
+        .tender, .proposal {
             margin-bottom: 20px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        .proposal {
-            margin-left: 20px;
-            padding: 5px;
-            border-left: 2px solid #ccc;
+            padding: 20px;
+            background-color: #444;
+            border: 1px solid #555;
+            border-radius: 8px;
         }
         .button {
             display: inline-block;
@@ -72,11 +80,13 @@
 
         if (tender == null) {
             response.sendError(500, "Тендер за таким id не знайдено");
+            return;
         } else {
             request.setAttribute("tender", tender);
         }
     } else {
         response.sendError(500, "Id тендеру відсутнє");
+        return;
     }
 %>
 
@@ -95,13 +105,12 @@
     <div class="tender">
         <h2>${tender.name}</h2>
         <p>${tender.description}</p>
+        <p>${tender.deadline}</p>
         <p><fmt:formatNumber value="${tender.cost}" type="currency" currencySymbol="₴"/></p>
         <p>${tender.status}</p>
         <c:if test="${not empty user and tender.authorId == user.userId}">
             <a href="checkReviews.jsp?id=${tender.id}" class="button">Переглянути відгуки</a>
             <a href="editTender.jsp?id=${tender.id}" class="button">Редагувати ваш тендер</a>
-        </c:if>
-        <c:if test="${not empty user and tender.authorId == user.userId}">
             <a href="generateURL?id=${tender.id}" class="button">Згенерувати посилання на тендер</a>
             <p>${URL}</p>
         </c:if>
@@ -109,8 +118,10 @@
 
     <span class="message">${proposalSuccess}</span><br>
     <span class="message">${successEditMessage}</span><br>
-    <c:if test="${(empty user) or (user.userId ne tender.authorId)}">
+    <span class="message">${successReviewMessage}</span><br>
+    <c:if test="${tender.author ne user and not tender.isAfterDeadline()}">
         <a href="createProposal.jsp?id=${tender.id}" class="button">Створити пропозицію</a>
+        <a href="createTenderReview.jsp?id=${tender.id}" class="button">Відгукнутися</a>
     </c:if>
     <h2>Тендерні пропозиції</h2>
     <div class="proposals">
@@ -121,6 +132,9 @@
                     <p>${proposal.proposalDetails}</p>
                     <p>${proposal.author.login}</p>
                     <p><fmt:formatNumber value="${proposal.price}" type="currency" currencySymbol="₴"/></p>
+                    <c:if test="${user.userId eq proposal.author.userId}">
+                        <a href="editProposal.jsp?proposalId=${proposal.id}&id=${proposal.tenderId}" class="button">Редагувати пропозицію</a>
+                    </c:if>
                 </div>
             </c:forEach>
         </c:if>

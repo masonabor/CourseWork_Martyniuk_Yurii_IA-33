@@ -1,4 +1,4 @@
-package com.coursework.coursework.Controllers;
+package com.coursework.coursework.Controllers.ProposalControllers;
 
 import com.coursework.coursework.DAOs.TendersDAO;
 import com.coursework.coursework.ServiceLayer.Tender;
@@ -49,13 +49,13 @@ public class CreateProposalServlet extends HttpServlet {
             price = Double.parseDouble(request.getParameter("price"));
         } catch (NumberFormatException e) {
             request.setAttribute("errorProposal", "Недійсна ціна");
-            request.getRequestDispatcher("createProposal.jsp").forward(request, response);
+            request.getRequestDispatcher("createProposal.jsp?id" + tenderId).forward(request, response);
             return;
         }
 
         if (companyName.isEmpty()) {
             request.setAttribute("errorProposal", "Назва компанії повинна бути заповнена");
-            request.getRequestDispatcher("createProposal.jsp").forward(request, response);
+            request.getRequestDispatcher("createProposal.jsp?id" + tenderId).forward(request, response);
             return;
         }
 
@@ -66,11 +66,11 @@ public class CreateProposalServlet extends HttpServlet {
         }
         if (price > tender.getCost()) {
             request.setAttribute("errorProposal", "Ціна пропозиції повинна бути меншою, ніж бюджет на тендер");
-            request.getRequestDispatcher("createProposal.jsp").forward(request, response);
+            request.getRequestDispatcher("createProposal.jsp?id" + tenderId).forward(request, response);
             return;
         }
 
-        TenderProposal proposal = new TenderProposal(tenderId, companyName, proposalDetails, price, user);
+        TenderProposal proposal = new TenderProposal(tender.getId(), companyName, proposalDetails, price, user);
         tender.addTenderProposal(proposal);
         user.addTenderProposal(proposal);
 

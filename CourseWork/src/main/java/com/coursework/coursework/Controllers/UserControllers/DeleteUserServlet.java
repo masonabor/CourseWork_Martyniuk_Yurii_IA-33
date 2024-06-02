@@ -1,21 +1,20 @@
-package com.coursework.coursework.Controllers;
+package com.coursework.coursework.Controllers.UserControllers;
 
 import com.coursework.coursework.DAOs.UsersDAO;
 import com.coursework.coursework.ServiceLayer.User;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebServlet("/exitUser")
-public class ExitUserServlet extends HttpServlet {
+@WebServlet("/deleteUser")
+public class DeleteUserServlet extends HttpServlet {
 
     private UsersDAO usersDataBase;
 
     @Override
-    public void init() throws ServletException {
+    public void init() {
         usersDataBase = (UsersDAO) getServletContext().getAttribute("usersDataBase");
     }
 
@@ -25,11 +24,15 @@ public class ExitUserServlet extends HttpServlet {
 
         User user = (User) request.getSession().getAttribute("user");
 
+
         if (user != null && usersDataBase.isRegisteredUser(user.getLogin())) {
+
+            usersDataBase.deleteUser(user);
             request.getSession().invalidate();
-            response.sendRedirect("homePage");
+            response.sendRedirect("homePage.jsp");
+
         } else {
-            response.sendError(500, "Помилка при виході з облікового запису");
+            response.sendError(500, "Помилка при видаленні облікового запису");
         }
     }
 }

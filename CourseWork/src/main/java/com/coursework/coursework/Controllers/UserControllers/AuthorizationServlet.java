@@ -1,4 +1,4 @@
-package com.coursework.coursework.Controllers;
+package com.coursework.coursework.Controllers.UserControllers;
 
 import com.coursework.coursework.DAOs.UsersDAO;
 import com.coursework.coursework.ServiceLayer.User;
@@ -9,14 +9,15 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+import static com.coursework.coursework.ServiceLayer.PasswordHashing.hashPassword;
+
 @WebServlet("/authorization")
 public class AuthorizationServlet extends HttpServlet {
 
     private UsersDAO usersDataBase;
 
     @Override
-    public void init() throws ServletException {
-        super.init();
+    public void init() {
         usersDataBase = (UsersDAO) getServletContext().getAttribute("usersDataBase");
     }
 
@@ -29,7 +30,7 @@ public class AuthorizationServlet extends HttpServlet {
         if (usersDataBase.isRegisteredUser(username)) {
             User user = usersDataBase.findByLogin(username);
 
-            if (user != null && user.getPassword().equals(password)) {
+            if (user != null && user.getPassword().equals(hashPassword(password))) {
                 request.getSession().setAttribute("user", user);
 
                 if (addressing.equals("createTender")) {

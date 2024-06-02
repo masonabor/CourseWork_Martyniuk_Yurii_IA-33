@@ -1,4 +1,4 @@
-package com.coursework.coursework.Controllers;
+package com.coursework.coursework.Controllers.TenderControllers;
 
 import com.coursework.coursework.DAOs.TendersDAO;
 import com.coursework.coursework.ServiceLayer.Tender;
@@ -81,7 +81,7 @@ public class EditTenderServlet extends HttpServlet {
         tender.updateDeadline(deadline);
         tender.updateCost(cost);
 
-        request.setAttribute("seccessEditMessage", "Тендер успішно оновлено");
+        request.setAttribute("successEditMessage", "Тендер успішно оновлено");
         response.sendRedirect("tenderDetails.jsp?id=" + tender.getId());
     }
 
@@ -104,11 +104,12 @@ public class EditTenderServlet extends HttpServlet {
             return;
         }
 
-        isDeletedTender = tendersDataBase.deleteTenderById(tenderId);
+        isDeletedTender = tendersDataBase.deleteTender(tendersDataBase.getTenderById(tenderId));
+
 
         if (!isDeletedTender) {
             request.setAttribute("deleteError", "Тендер не видалено");
             request.getRequestDispatcher("editTender.jsp").forward(request, response);
-        } else request.getRequestDispatcher("homePage.jsp").forward(request, response);
+        } else request.getRequestDispatcher("homePage").forward(request, response);
     }
 }

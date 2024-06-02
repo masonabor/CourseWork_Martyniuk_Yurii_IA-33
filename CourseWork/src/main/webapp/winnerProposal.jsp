@@ -1,14 +1,14 @@
-<%@ page import="java.util.UUID" %>
-<%@ page import="com.coursework.coursework.DAOs.TendersDAO" %>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <%@ page import="com.coursework.coursework.ServiceLayer.Tender" %>
+<%@ page import="com.coursework.coursework.DAOs.TendersDAO" %>
+<%@ page import="java.util.UUID" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Відгуки на тендер</title>
+    <title>Переможець тендеру</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -37,19 +37,6 @@
         .header a:hover {
             background-color: #555;
         }
-        .tender {
-            padding: 10px;
-            border: 1px solid #555;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            background-color: #444;
-        }
-        .review {
-            margin-left: 20px;
-            padding: 5px;
-            border-left: 2px solid #555;
-            background-color: #555;
-        }
         .button {
             display: inline-block;
             padding: 10px 20px;
@@ -76,8 +63,10 @@
 
         if (tender == null) {
             response.sendError(500, "Тендер за таким id не знайдено");
+            return;
         } else {
-            request.setAttribute("tender", tender);
+            request.setAttribute("winnerProposal", tender.getWinnerProposal());
+            request.setAttribute("tenderName", tender.getName());
         }
     } else {
         response.sendError(500, "Id тендеру відсутнє");
@@ -86,25 +75,16 @@
 %>
 
 <div class="container">
-    <h1>Відгуки на тендер "${tender.name}"</h1>
-
-    <c:if test="${empty tender.tenderReviews}">
-        <h2>У вас поки немає відгуків</h2>
-    </c:if>
-    <div class="tender">
-        <c:if test="${not empty tender.tenderReviews}">
-            <c:forEach var="review" items="${tender.tenderReviews}">
-                <div class="review">
-                    <p>Назва компанії: ${review.companyName}</p>
-                    <p>${review.review}</p>
-                    <p>Номер телефону: ${review.phoneNumber}</p>
-                </div>
-            </c:forEach>
-        </c:if>
+    <h1>Переможець тендеру "${tenderName}"</h1>
+    <div class="proposal">
+        <p>Компанія: ${winnerProposal.companyName}</p>
+        <p>Автор: ${winnerProposal.author.login}</p>
+        <p>Деталі пропозиції: ${winnerProposal.proposalDetails}</p>
+        <p>Ціна: <fmt:formatNumber value="${winnerProposal.price}" type="currency" currencySymbol="₴"/></p>
     </div>
-    <a href="userAccount.jsp" class="button">Повернутися назад</a>
+    <a href="chatPage.jsp?chatId=${winnerProposal.chatId}" class="button">Написати автору пропозиції</a>
+    <a href="homePage" class="button">Повернутися до списку тендерів</a>
 </div>
+
 </body>
 </html>
-
-

@@ -1,12 +1,15 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page import="java.util.UUID" %>
 <%@ page import="com.coursework.coursework.DAOs.TendersDAO" %>
 <%@ page import="com.coursework.coursework.ServiceLayer.Tender" %>
 <%@ page import="com.coursework.coursework.ServiceLayer.User" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
-<html>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
+<html lang="en">
 <head>
-    <title>Редагування тендеру</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вибір переможця</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -22,6 +25,10 @@
             background-color: #333;
             border-radius: 8px;
         }
+        .header {
+            text-align: right;
+            margin-bottom: 20px;
+        }
         .header a {
             color: #fff;
             text-decoration: none;
@@ -35,43 +42,32 @@
         .header a:hover {
             background-color: #555;
         }
-        form {
-            margin-top: 20px;
+        h1 {
             text-align: center;
         }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            color: #ccc;
-            text-align: left;
-        }
-        input[type="text"],
-        textarea,
-        input[type="number"],
-        input[type="date"] {
-            width: calc(100% - 24px);
+        .proposal {
             padding: 10px;
-            margin-bottom: 20px;
             border: 1px solid #555;
             border-radius: 5px;
+            margin-bottom: 20px;
             background-color: #444;
-            color: #fff;
-            box-sizing: border-box;
         }
-        textarea {
-            resize: vertical;
+        .proposal h3 {
+            margin-top: 0;
         }
-        button {
+        .proposal p {
+            margin: 5px 0;
+        }
+        input[type="submit"] {
+            padding: 10px 20px;
             background-color: #008CBA;
             color: #fff;
             border: none;
-            padding: 10px 20px;
             border-radius: 5px;
             cursor: pointer;
             transition: background-color 0.3s;
-            margin: 5px 0;
         }
-        button:hover {
+        input[type="submit"]:hover {
             background-color: #005f7f;
         }
     </style>
@@ -101,49 +97,43 @@
 
         if (user != tender.getAuthor()) {
             response.sendError(500, "ви не є власником тендеру");
+            return;
         }
     } else {
         response.sendError(500, "Id тендеру відсутнє");
         return;
     }
 %>
-
 <div class="container">
-    <h2>Редагування тендеру</h2>
-    <form action="editTender" method="post">
-        <input type="hidden" name="id" value="${tender.id}" />
-        <label for="name">Назва тендеру:</label>
-        <input type="text" id="name" name="name" value="${tender.name}" required/><br/>
-        <label for="description">Опис тендеру:</label>
-        <textarea id="description" name="description" required>${tender.description}</textarea><br/>
-        <label for="deadline">Кінцевий термін:</label><br>
-        <input type="date" id="deadline" name="deadline" value="${tender.deadline}" required><br>
-        <label for="cost">Сума:</label>
-        <input type="number" id="cost" name="cost" value="${tender.cost}" required/><br/>
-        <button type="submit">Зберегти</button>
-    </form>
-
-    <form action="editTender" method="get" onsubmit="return confirm('Ви впевнені, що хочете видалити цей тендер?');">
-        <input type="hidden" name="id" value="${tender.id}" />
-        <button type="submit">Видалити</button>
-    </form>
-
-    <form action="changeTenderStatus" method="get">
-        <input type="hidden" name="id" value="${tender.id}" />
-        <button type="submit">
-            <c:if test="${tender.status eq 'INACTIVE'}">
-                Активувати
-                <input type="hidden" name="newStatus" value="activate" />
-            </c:if>
-            <c:if test="${tender.status eq 'ACTIVE'}">
-                Деактивувати
-                <input type="hidden" name="newStatus" value="deactivate" />
-            </c:if>
-        </button>
-    </form>
+    <div class="header">
+        <c:if test="${not empty user}">
+            <p>Ви увійшли як: ${user.getLogin()}</p>
+            <a href="userAccount.jsp">Кабінет користувача</a>
+        </c:if>
+        <c:if test="${empty user}">
+            <a href="loginPage.jsp">Увійти</a>
+        </c:if>
+    </div>
+    <h1>Кандидати в переможці</h1>
+    <c:if test="${not empty tender.tenderProposals}">
+        <c:forEach var="proposal" items="${tender.tenderProposals}">
+            <div class="proposal">
+                <h3>${proposal.companyName}</h3>
+                <p>${proposal.proposalDetails}</p>
+                <p>${proposal.author.login}</p>
+                <p><fmt:formatNumber value="${proposal.price}" type="currency" currencySymbol="₴"/></p>
+                <form action="chooseWinner" method="post">
+                    <input type="hidden" name="winnerId" value="${proposal.id}">
+                    <input type="hidden" name="tenderId" value="${tender.id}">
+                    <input type="submit" value="Вибрати переможцем">
+                </form>
+            </div>
+        </c:forEach>
+    </c:if>
+    <c:if test="${empty tender.tenderProposals}">
+        <h3>Немає тендерних пропозицій</h3>
+    </c:if>
 </div>
-
 </body>
 </html>
-
 
