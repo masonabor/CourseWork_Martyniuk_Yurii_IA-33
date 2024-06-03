@@ -26,22 +26,18 @@ public class User implements UserInterface {
         this.tenderProposals = new HashMap<>();
     }
 
-    @Override
     public void setLogin(String login) {
         this.login = login;
     }
 
-    @Override
     public void setPassword(String password) {
         this.password = hashPassword(password);
     }
 
-    @Override
     public void setId(UUID id) {
         this.id = id;
     }
 
-    @Override
     public void addTender(Tender tender) {
         this.tenders.put(tender.getId(), tender);
     }
@@ -51,37 +47,30 @@ public class User implements UserInterface {
         this.tenderProposals.put(tenderProposal.getId(), tenderProposal);
     }
 
-    @Override
     public String getLogin() {
         return login;
     }
 
-    @Override
     public String getPassword() {
         return password;
     }
 
-    @Override
     public UUID getUserId() {
         return id;
     }
 
-    @Override
     public HashMap<UUID, Tender> getTenders() {
         return (HashMap<UUID, Tender>) tenders;
     }
 
-    @Override
     public HashMap<UUID, TenderProposal> getTenderProposals() {
         return (HashMap<UUID, TenderProposal>) tenderProposals;
     }
 
-    @Override
     public void setTenders(HashMap<UUID, Tender> tenders) {
         this.tenders = tenders;
     }
 
-    @Override
     public void setTenderProposals(HashMap<UUID, TenderProposal> tenderProposals) {
         this.tenderProposals = tenderProposals;
     }

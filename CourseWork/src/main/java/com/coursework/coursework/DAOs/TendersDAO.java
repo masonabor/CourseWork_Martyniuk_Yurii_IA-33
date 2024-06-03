@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 public class TendersDAO implements TendersDAOInterface {
     private Map<UUID, Tender> tendersDataBase = new LinkedHashMap<>(15, 0.65f);
 
-    @Override
     public LinkedHashMap<UUID, Tender> getAllTenders() {
         return tendersDataBase.entrySet()
                 .stream()
@@ -22,9 +21,14 @@ public class TendersDAO implements TendersDAOInterface {
                         LinkedHashMap::new));
     }
 
-    @Override
     public void setTendersDataBase(HashMap<UUID, Tender> tendersDataBase) {
         this.tendersDataBase = tendersDataBase;
+    }
+
+    @Override
+    public boolean isTenderNameInDataBase(String name) {
+        return tendersDataBase.values().stream()
+                .anyMatch(tender -> tender.getName().equalsIgnoreCase(name));
     }
 
     @Override

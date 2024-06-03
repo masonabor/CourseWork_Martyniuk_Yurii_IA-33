@@ -45,6 +45,12 @@ public class CreateTenderServlet extends HttpServlet {
             return;
         }
 
+        if (tendersDataBase.isTenderNameInDataBase(name)) {
+            request.setAttribute("errorTender", "Таке ім'я тендеру уже існує");
+            request.getRequestDispatcher("createTender.jsp").forward(request, response);
+            return;
+        }
+
         LocalDate deadline;
         double cost;
 

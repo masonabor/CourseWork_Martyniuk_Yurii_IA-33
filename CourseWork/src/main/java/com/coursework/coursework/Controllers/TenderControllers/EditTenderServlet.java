@@ -52,7 +52,13 @@ public class EditTenderServlet extends HttpServlet {
         String costStr = request.getParameter("cost");
 
         if (name == null || description == null || deadlineStr == null || costStr == null) {
-            request.setAttribute("errorEdinTender", "Введіть дані");
+            request.setAttribute("errorEditTender", "Введіть дані");
+            request.getRequestDispatcher("editTender.jsp").forward(request, response);
+            return;
+        }
+
+        if (tendersDataBase.isTenderNameInDataBase(name)) {
+            request.setAttribute("errorEditTender", "Таке ім'я тендеру уже існує");
             request.getRequestDispatcher("editTender.jsp").forward(request, response);
             return;
         }

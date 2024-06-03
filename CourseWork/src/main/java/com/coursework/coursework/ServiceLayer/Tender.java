@@ -35,72 +35,58 @@ public class Tender implements TenderInterface, Comparable<Tender> {
         this.winnerProposal = null;
     }
 
-    @Override
     public UUID getId() {
         return id;
     }
 
-    @Override
     public String getName() {
         return name;
     }
 
-    @Override
     public UUID getAuthorId() {
         return author.getUserId();
     }
 
-    @Override
     public ArrayList<TenderReview> getTenderReviews() {
         return tenderReviews;
     }
 
-    @Override
     public void setTenderReviews(ArrayList<TenderReview> tenderReviews) {
         this.tenderReviews = tenderReviews;
     }
 
-    @Override
     public double getCost() {
         return cost;
     }
 
-    @Override
     public TenderProposal getWinnerProposal() {
         return winnerProposal;
     }
 
-    @Override
     public void setWinnerProposal(TenderProposal winnerProposal) {
         this.winnerProposal = winnerProposal;
     }
 
-    @Override
     public String getDescription() {
         return description;
     }
 
-    @Override
     public LocalDate getDeadline() {
         return deadline;
     }
 
-    @Override
     public void setAuthor(User author) {
         this.author = author;
     }
 
-    @Override
     public User getAuthor() {
         return author;
     }
 
-    @Override
     public ArrayList<TenderProposal> getTenderProposals() {
         return tenderProposals;
     }
 
-    @Override
     public void setId(UUID id) {
         this.id = id;
     }
@@ -120,7 +106,6 @@ public class Tender implements TenderInterface, Comparable<Tender> {
         this.deadline = deadline;
     }
 
-    @Override
     public void setTenderProposals(ArrayList<TenderProposal> tenderProposals) {
         this.tenderProposals = tenderProposals;
     }
@@ -130,7 +115,6 @@ public class Tender implements TenderInterface, Comparable<Tender> {
         this.cost = cost;
     }
 
-    @Override
     public Status getStatus() {
         return status;
     }
