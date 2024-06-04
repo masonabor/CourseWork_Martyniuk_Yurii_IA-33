@@ -8,12 +8,10 @@ import java.util.*;
 public class UsersDAO implements UsersDAOInterface {
     private Set<User> usersDataBase = new TreeSet<>(Comparator.comparing(User::getLogin));
 
-    @Override
     public void setUsersDataBase(Set<User> usersDataBase) {
         this.usersDataBase = usersDataBase;
     }
 
-    @Override
     public Set<User> getUsersDataBase() {
         return usersDataBase;
     }
