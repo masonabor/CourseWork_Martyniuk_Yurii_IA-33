@@ -1,6 +1,7 @@
 package com.coursework.coursework.ServiceLayer;
 
 import com.coursework.coursework.Interfaces.ModelsInterfaces.UserInterface;
+import jakarta.persistence.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -10,12 +11,22 @@ import java.util.stream.Collectors;
 
 import static com.coursework.coursework.ServiceLayer.PasswordHashing.hashPassword;
 
+@Entity
+@Table(name = "users")
 public class User implements UserInterface {
 
+    @Id()
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
+
+    @Column(nullable = false, unique = true)
     private String login;
+
+    @Column(nullable = false)
     private String password;
+
     private Map<UUID, Tender> tenders;
+
     private Map<UUID, TenderProposal> tenderProposals;
 
     public User(String login, String password) {
