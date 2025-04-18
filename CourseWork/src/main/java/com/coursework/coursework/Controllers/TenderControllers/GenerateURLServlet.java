@@ -52,7 +52,7 @@ public class GenerateURLServlet extends HttpServlet {
 
     private String generateURL(Tender tender) {
         if (tendersDataBase.isTenderInDataBase(tender.getId())) {
-            return "http://localhost:8080/CourseWork_war_exploded/tenderDetails.jsp?id=" + tender.getId();
+            return "http://localhost:8080/CourseWork1_war_exploded/tenderDetails.jsp?id=" + tender.getId();
         } else return "Ви не є власником цього тендеру";
     }
 }

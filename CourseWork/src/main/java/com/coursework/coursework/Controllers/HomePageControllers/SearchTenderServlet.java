@@ -26,7 +26,7 @@ public class SearchTenderServlet extends HttpServlet {
 
         String keyword = request.getParameter("keyword");
         if (keyword == null || keyword.trim().isEmpty()) {
-            response.sendRedirect("tendersPage.jsp");
+            response.sendRedirect("searchedTenders.jsp");
             return;
         }
 

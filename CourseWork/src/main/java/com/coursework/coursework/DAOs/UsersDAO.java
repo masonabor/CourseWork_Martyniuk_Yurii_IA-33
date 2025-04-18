@@ -27,9 +27,9 @@ public class UsersDAO implements UsersDAOInterface {
     }
 
     @Override
-    public User findByLogin(String usernaem) {
+    public User findByLogin(String username) {
         for (User user : usersDataBase) {
-            if (user.getLogin().equals(usernaem)) {
+            if (user.getLogin().equals(username)) {
                 return user;
             }
         }
