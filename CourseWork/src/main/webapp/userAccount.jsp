@@ -1,3 +1,4 @@
+<%@ page import="com.coursework.coursework.ServiceLayer.User" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
@@ -89,6 +90,10 @@
     </style>
 </head>
 <body>
+<%
+    User user = (User) request.getSession().getAttribute("user");
+    request.setAttribute("user", user);
+%>
 <div class="container">
     <h2>Інформація про користувача</h2>
     <p>Логін: ${user.login}</p>
@@ -107,19 +112,18 @@
     </c:if>
     <c:forEach var="tenderEntry" items="${user.tenders}">
         <div class="tender">
-            <c:set var="tenderId" value="${tenderEntry.key}" />
-            <h2>${tenderEntry.value.name}</h2>
-            <p>${tenderEntry.value.author.login}</p>
-            <p>${tenderEntry.value.description}</p>
-            <p><fmt:formatNumber value="${tenderEntry.value.cost}" type="currency" currencySymbol="₴"/></p>
-            <c:if test="${not empty tenderEntry.value.winnerProposal}">
-                <a href="winnerProposal.jsp?id=${tenderId}" class="button">Переможець тендеру</a>
+            <h2>${tenderEntry.name}</h2>
+            <p>${tenderEntry.author.login}</p>
+            <p>${tenderEntry.description}</p>
+            <p><fmt:formatNumber value="${tenderEntry.cost}" type="currency" currencySymbol="₴"/></p>
+            <c:if test="${not empty tenderEntry.winnerProposal}">
+                <a href="winnerProposal.jsp?id=${tenderEntry.id}" class="button">Переможець тендеру</a>
             </c:if>
-            <a href="tenderDetails.jsp?id=${tenderId}" class="button">Деталі тендеру</a>
-            <a href="checkReviews.jsp?id=${tenderId}" class="button">Переглянути відгуки</a>
-            <a href="editTender.jsp?id=${tenderId}" class="button">Редагувати ваш тендер</a>
-            <c:if test="${tenderEntry.value.isAfterDeadline() and empty tenderEntry.value.winnerProposal}">
-                <a href="chooseWinner.jsp?id=${tenderId}" class="button">Вибір переможця</a>
+            <a href="tenderDetails.jsp?id=${tenderEntry.id}" class="button">Деталі тендеру</a>
+            <a href="checkReviews.jsp?id=${tenderEntry.id}" class="button">Переглянути відгуки</a>
+            <a href="editTender.jsp?id=${tenderEntry.id}" class="button">Редагувати ваш тендер</a>
+            <c:if test="${tenderEntry.isAfterDeadline() and empty tenderEntry.winnerProposal}">
+                <a href="chooseWinner.jsp?id=${tenderEntry.id}" class="button">Вибір переможця</a>
             </c:if>
         </div>
     </c:forEach>
@@ -132,12 +136,12 @@
     <c:if test="${not empty user.tenderProposals}">
         <c:forEach var="proposalEntry" items="${user.tenderProposals}">
             <div class="proposal">
-                <h2>${proposalEntry.value.companyName}</h2>
-                <p>${proposalEntry.value.proposalDetails}</p>
-                <p><fmt:formatNumber value="${proposalEntry.value.price}" type="currency" currencySymbol="₴"/></p>
-                <a href="editProposal.jsp?proposalId=${proposalEntry.value.id}&id=${proposalEntry.value.tenderId}" class="button">Редагувати пропозицію</a>
-                <c:if test="${not empty proposalEntry.value.chatId}">
-                    <a href="chatPage.jsp?chatId=${proposalEntry.value.chatId}" class="button">Написати автору пропозиції</a>
+                <h2>${proposalEntry.companyName}</h2>
+                <p>${proposalEntry.proposalDetails}</p>
+                <p><fmt:formatNumber value="${proposalEntry.price}" type="currency" currencySymbol="₴"/></p>
+                <a href="editProposal.jsp?proposalId=${proposalEntry.id}&id=${proposalEntry.tenderId}" class="button">Редагувати пропозицію</a>
+                <c:if test="${not empty proposalEntry.chatId}">
+                    <a href="chatPage.jsp?chatId=${proposalEntry.chatId}" class="button">Написати автору пропозиції</a>
                 </c:if>
             </div>
         </c:forEach>

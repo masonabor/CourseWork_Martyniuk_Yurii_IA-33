@@ -1,6 +1,7 @@
 package com.coursework.coursework.Controllers.TenderControllers;
 
 import com.coursework.coursework.DAOs.TendersDAO;
+import com.coursework.coursework.DAOs.UsersDAO;
 import com.coursework.coursework.ServiceLayer.Tender;
 import com.coursework.coursework.ServiceLayer.User;
 import jakarta.servlet.ServletException;
@@ -17,10 +18,12 @@ import java.util.UUID;
 public class EditTenderServlet extends HttpServlet {
 
     private TendersDAO tendersDataBase;
+    private UsersDAO usersDataBase;
 
     @Override
     public void init() {
         tendersDataBase = (TendersDAO) getServletContext().getAttribute("tendersDataBase");
+        usersDataBase = (UsersDAO) getServletContext().getAttribute("usersDataBase");
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -41,7 +44,7 @@ public class EditTenderServlet extends HttpServlet {
         }
 
         Tender tender = tendersDataBase.getTenderById(tenderId);
-        if (user != tender.getAuthor()) {
+        if (!(user.getUserId().equals(tender.getAuthor().getUserId()))) {
             response.sendError(400, "Ви не є власником тендеру");
             return;
         }
@@ -81,11 +84,15 @@ public class EditTenderServlet extends HttpServlet {
         }
 
 
-
+        tender.setAuthor(user);
         tender.updateName(name);
         tender.updateDescription(description);
         tender.updateDeadline(deadline);
         tender.updateCost(cost);
+        tendersDataBase.updateTender(tender);
+
+        User updatedUser = usersDataBase.findByLogin(user.getLogin());
+        request.getSession().setAttribute("user", updatedUser);
 
         request.setAttribute("successEditMessage", "Тендер успішно оновлено");
         response.sendRedirect("tenderDetails.jsp?id=" + tender.getId());
@@ -105,13 +112,14 @@ public class EditTenderServlet extends HttpServlet {
         UUID tenderId = UUID.fromString(id);
         boolean isDeletedTender;
 
-        if (user != tendersDataBase.getTenderById(tenderId).getAuthor()) {
+        if (!user.getUserId().equals(tendersDataBase.getTenderById(tenderId).getAuthor().getUserId())) {
             response.sendError(500, "Ви не є власником");
             return;
         }
 
         isDeletedTender = tendersDataBase.deleteTender(tendersDataBase.getTenderById(tenderId));
-
+        User updatedUser = usersDataBase.findByLogin(user.getLogin());
+        request.getSession().setAttribute("user", updatedUser);
 
         if (!isDeletedTender) {
             request.setAttribute("deleteError", "Тендер не видалено");

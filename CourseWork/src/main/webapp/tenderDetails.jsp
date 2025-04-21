@@ -77,6 +77,7 @@
         UUID tenderId = UUID.fromString(request.getParameter("id"));
         TendersDAO tendersDAO = (TendersDAO) request.getServletContext().getAttribute("tendersDataBase");
         Tender tender = tendersDAO.getTenderById(tenderId);
+        System.out.println(tender.getAuthor().getLogin());
 
         if (tender == null) {
             response.sendError(500, "Тендер за таким id не знайдено");
@@ -108,7 +109,7 @@
         <p>${tender.deadline}</p>
         <p><fmt:formatNumber value="${tender.cost}" type="currency" currencySymbol="₴"/></p>
         <p>${tender.status}</p>
-        <c:if test="${not empty user and tender.authorId == user.userId}">
+        <c:if test="${not empty user and tender.author.userId == user.userId}">
             <a href="checkReviews.jsp?id=${tender.id}" class="button">Переглянути відгуки</a>
             <a href="editTender.jsp?id=${tender.id}" class="button">Редагувати ваш тендер</a>
             <a href="generateURL?id=${tender.id}" class="button">Згенерувати посилання на тендер</a>
@@ -119,7 +120,7 @@
     <span class="message">${proposalSuccess}</span><br>
     <span class="message">${successEditMessage}</span><br>
     <span class="message">${successReviewMessage}</span><br>
-    <c:if test="${tender.author ne user and not tender.isAfterDeadline()}">
+    <c:if test="${tender.author.userId != user.userId and not tender.isAfterDeadline()}">
         <a href="createProposal.jsp?id=${tender.id}" class="button">Створити пропозицію</a>
         <a href="createTenderReview.jsp?id=${tender.id}" class="button">Відгукнутися</a>
     </c:if>
@@ -132,7 +133,7 @@
                     <p>${proposal.proposalDetails}</p>
                     <p>${proposal.author.login}</p>
                     <p><fmt:formatNumber value="${proposal.price}" type="currency" currencySymbol="₴"/></p>
-                    <c:if test="${user.userId eq proposal.author.userId}">
+                    <c:if test="${user eq proposal.author}">
                         <a href="editProposal.jsp?proposalId=${proposal.id}&id=${proposal.tenderId}" class="button">Редагувати пропозицію</a>
                     </c:if>
                 </div>

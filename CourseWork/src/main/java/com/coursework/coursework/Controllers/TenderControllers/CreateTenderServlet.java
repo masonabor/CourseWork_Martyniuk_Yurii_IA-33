@@ -1,6 +1,7 @@
 package com.coursework.coursework.Controllers.TenderControllers;
 
 import com.coursework.coursework.DAOs.TendersDAO;
+import com.coursework.coursework.DAOs.UsersDAO;
 import com.coursework.coursework.ServiceLayer.Tender;
 import com.coursework.coursework.ServiceLayer.User;
 import jakarta.servlet.ServletException;
@@ -16,10 +17,12 @@ import java.time.format.DateTimeParseException;
 public class CreateTenderServlet extends HttpServlet {
 
     private TendersDAO tendersDataBase;
+    private UsersDAO usersDataBase;
 
     @Override
     public void init() {
         tendersDataBase = (TendersDAO) getServletContext().getAttribute("tendersDataBase");
+        usersDataBase = (UsersDAO) getServletContext().getAttribute("usersDataBase");
     }
 
     @Override
@@ -72,7 +75,8 @@ public class CreateTenderServlet extends HttpServlet {
 
         Tender tender = new Tender(name, description, deadline, cost, user);
         tendersDataBase.addTender(tender);
-        user.addTender(tender);
+        User updatedUser = usersDataBase.findByLogin(user.getLogin());
+        request.setAttribute("updatedUser", updatedUser);
         response.sendRedirect("tenderDetails.jsp?id=" + tender.getId());
     }
 }

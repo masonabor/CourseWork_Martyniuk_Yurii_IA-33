@@ -140,11 +140,11 @@
           <p>${tenderEntry.value.description}</p>
           <p><fmt:formatNumber value="${tenderEntry.value.cost}" type="currency" currencySymbol="₴"/></p>
           <a href="tenderDetails.jsp?id=${tenderId}" class="button">Деталі тендеру</a>
-          <c:if test="${tenderEntry.value.author ne user and not tenderEntry.value.isAfterDeadline()}">
+          <c:if test="${tenderEntry.value.author.userId != user.userId and not tenderEntry.value.isAfterDeadline()}">
             <a href="createProposal.jsp?id=${tenderId}" class="button">Створити пропозицію</a>
             <a href="createTenderReview.jsp?id=${tenderId}" class="button">Відгукнутися</a>
           </c:if>
-          <c:if test="${tenderEntry.value.author == user}">
+          <c:if test="${tenderEntry.value.author.userId == user.userId}">
             <a href="editTender.jsp?id=${tenderId}" class="button">Редагувати ваш тендер</a>
           </c:if>
         </c:if>

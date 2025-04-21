@@ -4,7 +4,7 @@ import com.coursework.coursework.ServiceLayer.TenderProposal;
 import com.coursework.coursework.ServiceLayer.TenderReview;
 import com.coursework.coursework.ServiceLayer.User;
 import java.time.LocalDate;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public interface TenderInterface {
@@ -16,7 +16,7 @@ public interface TenderInterface {
     void addTenderProposal(TenderProposal proposal);
     void addTenderReview(TenderReview review);
     TenderProposal findProposalById(UUID proposalId);
-    ArrayList<TenderProposal> sortedProposalsByPrice();
+    List<TenderProposal> sortedProposalsByPrice();
     void deleteProposalById(UUID proposalId, User user);
     void deleteAllProposals();
     boolean isAfterDeadline();

@@ -5,8 +5,12 @@
         <property name="hibernate.connection.username">postgres</property>
         <property name="hibernate.connection.password">admin</property>
 
+        <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
         <property name="hibernate.hbm2ddl.auto">update</property>
         <property name="show_sql">true</property>
-
+        <mapping class="com.coursework.coursework.ServiceLayer.User"/>
+        <mapping class="com.coursework.coursework.ServiceLayer.Tender"/>
+        <mapping class="com.coursework.coursework.ServiceLayer.TenderProposal"/>
+        <mapping class="com.coursework.coursework.ServiceLayer.TenderReview"/>
     </session-factory>
 </hibernate-configuration>

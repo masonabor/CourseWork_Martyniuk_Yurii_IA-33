@@ -1,32 +1,50 @@
 package com.coursework.coursework.ServiceLayer;
 
+import jakarta.persistence.*;
+
+import java.util.Objects;
 import java.util.UUID;
 
+@Entity
+@Table(name = "tenderProposals")
 public class TenderProposal {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
-    private UUID tenderId;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "tender_id", nullable = false)
+    private Tender tender;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "author_id", nullable = false)
     private User author;
     private String companyName;
     private String proposalDetails;
     private double price;
     private UUID chatId;
 
-    public TenderProposal(UUID tenderId, String companyName, String proposalDetails, double price, User user) {
+    public TenderProposal(Tender tender, String companyName, String proposalDetails, double price, User user) {
         this.id = UUID.randomUUID();
-        this.tenderId = tenderId;
         this.companyName = companyName;
+        this.tender = tender;
         this.proposalDetails = proposalDetails;
         this.price = price;
         this.author = user;
         this.chatId = null;
     }
 
+    public TenderProposal() {
+
+    }
+
     public UUID getId() {
         return id;
     }
 
-    public UUID getTenderId() {
-        return tenderId;
+    public Tender getTenderId() {
+        return tender;
     }
 
     public String getCompanyName() {
@@ -45,8 +63,8 @@ public class TenderProposal {
         this.id = id;
     }
 
-    public void setTenderId(UUID tenderId) {
-        this.tenderId = tenderId;
+    public void setTenderId(Tender tender) {
+        this.tender = tender;
     }
 
     public void setCompanyName(String companyName) {
@@ -76,4 +94,18 @@ public class TenderProposal {
     public User getAuthor() {
         return author;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TenderProposal that = (TenderProposal) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
 }

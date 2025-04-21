@@ -1,6 +1,7 @@
 package com.coursework.coursework.Controllers.ProposalControllers;
 
 import com.coursework.coursework.DAOs.TendersDAO;
+import com.coursework.coursework.DAOs.UsersDAO;
 import com.coursework.coursework.ServiceLayer.Tender;
 import com.coursework.coursework.ServiceLayer.TenderProposal;
 import com.coursework.coursework.ServiceLayer.User;
@@ -16,10 +17,12 @@ import java.util.UUID;
 public class CreateProposalServlet extends HttpServlet {
 
     private TendersDAO tendersDataBase;
+    private UsersDAO usersDataBase;
 
     @Override
     public void init() {
         tendersDataBase = (TendersDAO) getServletContext().getAttribute("tendersDataBase");
+        usersDataBase = (UsersDAO) getServletContext().getAttribute("usersDataBase");
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -70,9 +73,17 @@ public class CreateProposalServlet extends HttpServlet {
             return;
         }
 
-        TenderProposal proposal = new TenderProposal(tender.getId(), companyName, proposalDetails, price, user);
-        tender.addTenderProposal(proposal);
+        TenderProposal proposal = new TenderProposal();
+        proposal.setCompanyName(companyName);
+        proposal.setProposalDetails(proposalDetails);
+        proposal.setPrice(price);
+        proposal.setAuthor(user);
+        proposal.setTenderId(tender);
         user.addTenderProposal(proposal);
+        tendersDataBase.updateProposal(tender, proposal);
+
+        User updatedUser = usersDataBase.findByLogin(user.getLogin());
+        request.getSession().setAttribute("user", updatedUser);
 
         request.setAttribute("proposalSuccess", "Тендерну пропозицію успішно створено ");
         request.getRequestDispatcher("tenderDetails.jsp?tenderId=" + tenderId).forward(request, response);

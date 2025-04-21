@@ -1,6 +1,7 @@
 package com.coursework.coursework.Controllers.ProposalControllers;
 
 import com.coursework.coursework.DAOs.TendersDAO;
+import com.coursework.coursework.DAOs.UsersDAO;
 import com.coursework.coursework.ServiceLayer.Tender;
 import com.coursework.coursework.ServiceLayer.TenderProposal;
 import com.coursework.coursework.ServiceLayer.User;
@@ -16,15 +17,18 @@ import java.util.UUID;
 public class EditProposalServlet extends HttpServlet {
 
     private TendersDAO tendersDataBase;
+    private UsersDAO usersDataBase;
 
     @Override
     public void init() {
         tendersDataBase = (TendersDAO) getServletContext().getAttribute("tendersDataBase");
+        usersDataBase = (UsersDAO) getServletContext().getAttribute("usersDataBase");
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        User user = (User) request.getSession().getAttribute("user");
         String tenderIdStr = request.getParameter("tenderId");
         String proposalIdStr = request.getParameter("proposalId");
 
@@ -78,6 +82,9 @@ public class EditProposalServlet extends HttpServlet {
         proposal.setProposalDetails(proposalDetails);
         proposal.setPrice(price);
 
+        User updatedUser = usersDataBase.findByLogin(user.getLogin());
+        request.setAttribute("updatedUser", updatedUser);
+
         request.setAttribute("editProposalSuccess", "Тендерну пропозицію успішно оновлено");
         request.getRequestDispatcher("userAccount.jsp").forward(request, response);
     }
@@ -113,6 +120,9 @@ public class EditProposalServlet extends HttpServlet {
         User user = (User) request.getSession().getAttribute("user");
         tender.deleteProposalById(proposal.getId(), user);
         user.deleteUserProposal(proposal);
+
+        User updatedUser = usersDataBase.findByLogin(user.getLogin());
+        request.setAttribute("updatedUser", updatedUser);
 
         request.setAttribute("editProposalSuccess", "Пропозицію успішно видалено");
         request.getRequestDispatcher("userAccount.jsp").forward(request, response);

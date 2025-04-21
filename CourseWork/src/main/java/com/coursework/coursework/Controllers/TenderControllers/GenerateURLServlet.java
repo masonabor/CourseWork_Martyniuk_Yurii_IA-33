@@ -41,7 +41,7 @@ public class GenerateURLServlet extends HttpServlet {
         }
 
         Tender tender = tendersDataBase.getTenderById(tenderId);
-        if (user != tender.getAuthor()) {
+        if (!user.getUserId().equals(tender.getAuthor().getUserId())) {
             response.sendError(400, "Ви не є власником тендеру");
             return;
         }

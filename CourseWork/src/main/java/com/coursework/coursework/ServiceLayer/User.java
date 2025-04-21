@@ -2,20 +2,16 @@ package com.coursework.coursework.ServiceLayer;
 
 import com.coursework.coursework.Interfaces.ModelsInterfaces.UserInterface;
 import jakarta.persistence.*;
+import jakarta.transaction.Transactional;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
-
-import static com.coursework.coursework.ServiceLayer.PasswordHashing.hashPassword;
 
 @Entity
 @Table(name = "users")
 public class User implements UserInterface {
 
-    @Id()
+    @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
@@ -25,81 +21,81 @@ public class User implements UserInterface {
     @Column(nullable = false)
     private String password;
 
-    private Map<UUID, Tender> tenders;
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Tender> tenders = new HashSet<>();
 
-    private Map<UUID, TenderProposal> tenderProposals;
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<TenderProposal> tenderProposals = new HashSet<>();
+
+    public User() {}
 
     public User(String login, String password) {
-        this.id = UUID.randomUUID();
         this.login = login;
-        this.password = hashPassword(password);
-        this.tenders = new HashMap<>();
-        this.tenderProposals = new HashMap<>();
-    }
-
-    public void setLogin(String login) {
-        this.login = login;
-    }
-
-    public void setPassword(String password) {
-        this.password = hashPassword(password);
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public void addTender(Tender tender) {
-        this.tenders.put(tender.getId(), tender);
-    }
-
-    @Override
-    public void addTenderProposal(TenderProposal tenderProposal) {
-        this.tenderProposals.put(tenderProposal.getId(), tenderProposal);
-    }
-
-    public String getLogin() {
-        return login;
-    }
-
-    public String getPassword() {
-        return password;
+        this.password = PasswordHashing.hashPassword(password);
     }
 
     public UUID getUserId() {
         return id;
     }
 
-    public HashMap<UUID, Tender> getTenders() {
-        return (HashMap<UUID, Tender>) tenders;
+    public String getLogin() {
+        return login;
     }
 
-    public HashMap<UUID, TenderProposal> getTenderProposals() {
-        return (HashMap<UUID, TenderProposal>) tenderProposals;
+    public void setLogin(String login) {
+        this.login = login;
     }
 
-    public void setTenders(HashMap<UUID, Tender> tenders) {
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = PasswordHashing.hashPassword(password);
+    }
+
+    public Set<Tender> getTenders() {
+        return tenders;
+    }
+
+    public void setTenders(Set<Tender> tenders) {
         this.tenders = tenders;
     }
 
-    public void setTenderProposals(HashMap<UUID, TenderProposal> tenderProposals) {
+    public Set<TenderProposal> getTenderProposals() {
+        return tenderProposals;
+    }
+
+    public void setTenderProposals(Set<TenderProposal> tenderProposals) {
         this.tenderProposals = tenderProposals;
     }
 
     @Override
+    public void addTender(Tender tender) {
+        this.tenders.add(tender);
+        tender.setAuthor(this);
+    }
+
+    @Override
+    public void addTenderProposal(TenderProposal tenderProposal) {
+        this.tenderProposals.add(tenderProposal);
+        tenderProposal.setAuthor(this);
+    }
+
+    @Override
     public List<Tender> searchUserTenders(String keyword) {
-        return tenders.values().stream()
-                .filter(tender -> tender.getName().toLowerCase().contains(keyword.toLowerCase()))
+        return tenders.stream()
+                .filter(t -> t.getName().toLowerCase().contains(keyword.toLowerCase()))
                 .collect(Collectors.toList());
     }
 
     @Override
     public void deleteUserTender(Tender tender) {
-            tenders.remove(tender.getId());
+        tenders.remove(tender);
     }
 
     @Override
     public void deleteUserProposal(TenderProposal proposal) {
-        tenderProposals.remove(proposal.getId());
+        tenderProposals.remove(proposal);
     }
 }

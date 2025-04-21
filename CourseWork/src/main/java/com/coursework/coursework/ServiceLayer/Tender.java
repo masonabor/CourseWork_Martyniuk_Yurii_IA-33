@@ -1,38 +1,52 @@
 package com.coursework.coursework.ServiceLayer;
 
 import com.coursework.coursework.Interfaces.ModelsInterfaces.TenderInterface;
+import jakarta.persistence.*;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
+@Entity
+@Table(name = "tenders")
+@Access(AccessType.FIELD)
 public class Tender implements TenderInterface, Comparable<Tender> {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
+
     private String name;
     private String description;
     private LocalDate deadline;
     private double cost;
-    private User author;
 
+    @Enumerated(EnumType.STRING)
     private Status status;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "author", nullable = false)
+    private User author;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "winner_proposal_id")
     private TenderProposal winnerProposal;
 
-    private ArrayList<TenderProposal> tenderProposals;
-    private ArrayList<TenderReview> tenderReviews;
+    @OneToMany(mappedBy = "tender", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TenderProposal> tenderProposals = new ArrayList<>();
 
-    public Tender(String name, String description, LocalDate deadline, double cost, User user) {
-        this.id = UUID.randomUUID();
+    @OneToMany(mappedBy = "tender", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<TenderReview> tenderReviews = new HashSet<>();
+
+    public Tender() {}
+
+    public Tender(String name, String description, LocalDate deadline, double cost, User author) {
         this.name = name;
         this.description = description;
         this.deadline = deadline;
-        this.tenderProposals = new ArrayList<>();
-        this.tenderReviews = new ArrayList<>();
         this.cost = cost;
-        this.author = user;
+        this.author = author;
         this.status = Status.ACTIVE;
-        this.winnerProposal = null;
     }
 
     public UUID getId() {
@@ -43,20 +57,64 @@ public class Tender implements TenderInterface, Comparable<Tender> {
         return name;
     }
 
-    public UUID getAuthorId() {
-        return author.getUserId();
+    public void updateName(String name) {
+        this.name = name;
     }
 
-    public ArrayList<TenderReview> getTenderReviews() {
-        return tenderReviews;
+    public String getDescription() {
+        return description;
     }
 
-    public void setTenderReviews(ArrayList<TenderReview> tenderReviews) {
-        this.tenderReviews = tenderReviews;
+    public void updateDescription(String description) {
+        this.description = description;
+    }
+
+    public LocalDate getDeadline() {
+        return deadline;
+    }
+
+    public void updateDeadline(LocalDate deadline) {
+        this.deadline = deadline;
     }
 
     public double getCost() {
         return cost;
+    }
+
+    public void updateCost(double cost) {
+        this.cost = cost;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void updateStatus(Status status) {
+        this.status = status;
+    }
+
+    public User getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(User author) {
+        this.author = author;
+    }
+
+    public List<TenderProposal> getTenderProposals() {
+        return tenderProposals;
+    }
+
+    public void setTenderProposals(List<TenderProposal> tenderProposals) {
+        this.tenderProposals = tenderProposals;
+    }
+
+    public Set<TenderReview> getTenderReviews() {
+        return tenderReviews;
+    }
+
+    public void setTenderReviews(Set<TenderReview> tenderReviews) {
+        this.tenderReviews = tenderReviews;
     }
 
     public TenderProposal getWinnerProposal() {
@@ -67,108 +125,53 @@ public class Tender implements TenderInterface, Comparable<Tender> {
         this.winnerProposal = winnerProposal;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public LocalDate getDeadline() {
-        return deadline;
-    }
-
-    public void setAuthor(User author) {
-        this.author = author;
-    }
-
-    public User getAuthor() {
-        return author;
-    }
-
-    public ArrayList<TenderProposal> getTenderProposals() {
-        return tenderProposals;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    @Override
-    public void updateName(String name) {
-        this.name = name;
-    }
-
-    @Override
-    public void updateDescription(String description) {
-        this.description = description;
-    }
-
-    @Override
-    public void updateDeadline(LocalDate deadline) {
-        this.deadline = deadline;
-    }
-
-    public void setTenderProposals(ArrayList<TenderProposal> tenderProposals) {
-        this.tenderProposals = tenderProposals;
-    }
-
-    @Override
-    public void updateCost(double cost) {
-        this.cost = cost;
-    }
-
-    public Status getStatus() {
-        return status;
-    }
-
-    @Override
-    public void updateStatus(TenderInterface.Status status) {
-        this.status = status;
-    }
-
     @Override
     public void addTenderProposal(TenderProposal proposal) {
-        tenderProposals.add(proposal);
+        if (!tenderProposals.contains(proposal)) {
+            tenderProposals.add(proposal);
+        }
     }
 
     @Override
     public void addTenderReview(TenderReview review) {
         tenderReviews.add(review);
+        review.setTender(this);
     }
 
     @Override
     public TenderProposal findProposalById(UUID proposalId) {
-        for (TenderProposal proposal: tenderProposals) {
-            if (proposal.getId().equals(proposalId)) {
-                return proposal;
-            }
-        }
-        return null;
+        return tenderProposals.stream()
+                .filter(p -> p.getId().equals(proposalId))
+                .findFirst()
+                .orElse(null);
     }
 
     @Override
-    public ArrayList<TenderProposal> sortedProposalsByPrice() {
-        ArrayList<TenderProposal> sortedProposals = tenderProposals;
-        sortedProposals.sort(Comparator.comparing(TenderProposal::getPrice));
-        return sortedProposals;
+    public List<TenderProposal> sortedProposalsByPrice() {
+        return tenderProposals.stream()
+                .sorted(Comparator.comparingDouble(TenderProposal::getPrice))
+                .collect(Collectors.toList());
     }
 
     @Override
     public void deleteProposalById(UUID proposalId, User user) {
-        tenderProposals.remove(findProposalById(proposalId));
-        user.getTenderProposals().remove(proposalId);
+        tenderProposals.removeIf(p -> p.getId().equals(proposalId));
+        user.deleteUserProposal(new TenderProposal()); // Можливо, краще передавати реальний об’єкт
     }
 
     @Override
     public void deleteAllProposals() {
-        tenderProposals = null;
+        tenderProposals.clear();
     }
 
     @Override
     public boolean isAfterDeadline() {
-        return LocalDate.now().isAfter(deadline);
+        return LocalDate.now().isAfter(this.deadline);
     }
 
     @Override
-    public int compareTo(Tender other) {
-        return this.name.compareTo(other.name);
+    public int compareTo(Tender o) {
+        return this.name.compareTo(o.name);
     }
 }
+

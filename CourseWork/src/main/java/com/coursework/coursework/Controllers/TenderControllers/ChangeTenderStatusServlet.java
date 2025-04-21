@@ -2,6 +2,7 @@ package com.coursework.coursework.Controllers.TenderControllers;
 
 
 import com.coursework.coursework.DAOs.TendersDAO;
+import com.coursework.coursework.DAOs.UsersDAO;
 import com.coursework.coursework.ServiceLayer.Tender;
 import com.coursework.coursework.ServiceLayer.User;
 import jakarta.servlet.annotation.WebServlet;
@@ -16,10 +17,12 @@ import java.util.UUID;
 public class ChangeTenderStatusServlet extends HttpServlet {
 
     private TendersDAO tendersDataBase;
+    private UsersDAO usersDataBase;
 
     @Override
     public void init() {
         tendersDataBase = (TendersDAO) getServletContext().getAttribute("tendersDataBase");
+        usersDataBase = (UsersDAO) getServletContext().getAttribute("usersDataBase");
     }
 
     @Override
@@ -47,7 +50,7 @@ public class ChangeTenderStatusServlet extends HttpServlet {
 
         Tender tender = tendersDataBase.getTenderById(tenderId);
 
-        if (user != tender.getAuthor()) {
+        if (!(user.getUserId().equals(tender.getAuthor().getUserId()))) {
             response.sendError(400, "Ви не є власником тендеру");
             return;
         }
@@ -55,6 +58,10 @@ public class ChangeTenderStatusServlet extends HttpServlet {
         if (newStatus.equals("activate")) {
             tender.updateStatus(Tender.Status.ACTIVE);
         } else tender.updateStatus(Tender.Status.INACTIVE);
+
+        tendersDataBase.updateTender(tender);
+        User updatesUser = usersDataBase.findByLogin(user.getLogin());
+        request.getSession().setAttribute("user", updatesUser);
 
         response.sendRedirect("tenderDetails.jsp?id=" + tenderId);
     }

@@ -1,70 +1,65 @@
 package com.coursework.coursework.ServiceLayer;
 
+import jakarta.persistence.*;
 import java.util.UUID;
 
+@Entity
+@Table(name = "tender_reviews")
 public class TenderReview {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "review_id", updatable = false, nullable = false)
     private UUID reviewId;
-    private UUID tenderId;
-    private UUID authorId;
+
+    // зв’язок до тендера
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "tender_id", nullable = false)
+    private Tender tender;
+
+    // зв’язок до автора (User)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "author_id", nullable = false)
+    private User author;
+
+    @Column(name = "review", columnDefinition = "TEXT", nullable = false)
     private String review;
+
+    @Column(name = "phone_number", nullable = false)
     private String phoneNumber;
+
+    @Column(name = "company_name", nullable = false)
     private String companyName;
 
-    public TenderReview(UUID tenderId, UUID authorId, String review, String phoneNumber, String companyName) {
-        this.reviewId = UUID.randomUUID();
-        this.tenderId = tenderId;
-        this.authorId = authorId;
+    protected TenderReview() { /* для JPA */ }
+
+    public TenderReview(Tender tender, User author, String review,
+                        String phoneNumber, String companyName) {
+        this.tender = tender;
+        this.author = author;
         this.review = review;
         this.phoneNumber = "+380" + phoneNumber;
         this.companyName = companyName;
     }
 
-    public UUID getReviewId() {
-        return reviewId;
-    }
+    // === Геттери/Сеттери ===
 
-    public UUID getTenderId() {
-        return tenderId;
-    }
+    public UUID getReviewId() { return reviewId; }
 
-    public UUID getAuthorId() {
-        return authorId;
-    }
+    public Tender getTender() { return tender; }
+    public void setTender(Tender tender) { this.tender = tender; }
 
-    public String getReview() {
-        return review;
-    }
+    public User getAuthor() { return author; }
+    public void setAuthor(User author) { this.author = author; }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
+    public String getReview() { return review; }
+    public void setReview(String review) { this.review = review; }
 
-    public String getCompanyName() {
-        return companyName;
-    }
-
-    public void setReviewId(UUID reviewId) {
-        this.reviewId = reviewId;
-    }
-
-    public void setTenderId(UUID tenderId) {
-        this.tenderId = tenderId;
-    }
-
-    public void setAuthorId(UUID authorId) {
-        this.authorId = authorId;
-    }
-
-    public void setReview(String review) {
-        this.review = review;
-    }
-
+    public String getPhoneNumber() { return phoneNumber; }
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = "+380" + phoneNumber;
     }
 
-    public void setCompanyName(String companyName) {
-        this.companyName = companyName;
-    }
+    public String getCompanyName() { return companyName; }
+    public void setCompanyName(String companyName) { this.companyName = companyName; }
 }
