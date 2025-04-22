@@ -139,7 +139,7 @@
                 <h2>${proposalEntry.companyName}</h2>
                 <p>${proposalEntry.proposalDetails}</p>
                 <p><fmt:formatNumber value="${proposalEntry.price}" type="currency" currencySymbol="₴"/></p>
-                <a href="editProposal.jsp?proposalId=${proposalEntry.id}&id=${proposalEntry.tenderId}" class="button">Редагувати пропозицію</a>
+                <a href="editProposal.jsp?proposalId=${proposalEntry.id}&id=${proposalEntry.tender.id}" class="button">Редагувати пропозицію</a>
                 <c:if test="${not empty proposalEntry.chatId}">
                     <a href="chatPage.jsp?chatId=${proposalEntry.chatId}" class="button">Написати автору пропозиції</a>
                 </c:if>

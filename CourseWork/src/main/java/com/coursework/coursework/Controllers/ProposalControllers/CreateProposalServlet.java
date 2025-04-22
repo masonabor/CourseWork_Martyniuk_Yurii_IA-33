@@ -78,9 +78,8 @@ public class CreateProposalServlet extends HttpServlet {
         proposal.setProposalDetails(proposalDetails);
         proposal.setPrice(price);
         proposal.setAuthor(user);
-        proposal.setTenderId(tender);
-        user.addTenderProposal(proposal);
-        tendersDataBase.updateProposal(tender, proposal);
+        proposal.setTender(tender);
+        tendersDataBase.createProposal(proposal);
 
         User updatedUser = usersDataBase.findByLogin(user.getLogin());
         request.getSession().setAttribute("user", updatedUser);

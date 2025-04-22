@@ -94,25 +94,30 @@ public class TendersDAO implements TendersDAOInterface {
         }
     }
 
-    public void updateProposal(Tender tender, TenderProposal proposal) {
+    public synchronized void updateProposal(Tender tender, TenderProposal proposal) {
         try (Session session = sessionFactory.openSession()) {
             Transaction tx = session.beginTransaction();
 
             Tender managedTender = session.get(Tender.class, tender.getId());
             User managedUser = session.get(User.class, proposal.getAuthor().getUserId());
 
-            proposal.setTenderId(managedTender);
-            proposal.setAuthor(managedUser);
-
             managedTender.addTenderProposal(proposal);
             managedUser.addTenderProposal(proposal);
 
-            session.persist(proposal);
+            session.merge(proposal);
+            session.merge(managedUser);
 
             tx.commit();
         }
     }
 
+    public synchronized void createProposal(TenderProposal proposal) {
+        try (Session session = sessionFactory.openSession()) {
+            Transaction tx = session.beginTransaction();
+            session.persist(proposal);
+            tx.commit();
+        }
+    }
 
     @Override
     public boolean isTenderInDataBase(UUID id) {
@@ -157,6 +162,26 @@ public class TendersDAO implements TendersDAOInterface {
                 map.put(tender.getId(), tender);
             }
             return map;
+        }
+    }
+
+    public synchronized void addReview(TenderReview review) {
+        try (Session session = sessionFactory.openSession()) {
+            Transaction tx = session.beginTransaction();
+            Tender tender = session.get(Tender.class, review.getTender().getId());
+            tender.addTenderReview(review);
+            session.persist(review);
+            session.merge(tender);
+
+            tx.commit();
+        }
+    }
+
+    public synchronized void deleteProposal(TenderProposal proposal) {
+        try (Session session = sessionFactory.openSession()) {
+            Transaction tx = session.beginTransaction();
+            session.remove(proposal);
+            tx.commit();
         }
     }
 }

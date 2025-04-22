@@ -70,7 +70,7 @@ public class CreateReviewServlet extends HttpServlet {
         }
 
         TenderReview tenderReview = new TenderReview(tender, user, review, phoneNumber, companyName);
-        tender.addTenderReview(tenderReview);
+        tendersDataBase.addReview(tenderReview);
 
         request.setAttribute("successReviewMessage", "Відгук успішно створено");
         request.getRequestDispatcher("homePage").forward(request, response);

@@ -43,7 +43,7 @@ public class TenderProposal {
         return id;
     }
 
-    public Tender getTenderId() {
+    public Tender getTender() {
         return tender;
     }
 
@@ -63,7 +63,7 @@ public class TenderProposal {
         this.id = id;
     }
 
-    public void setTenderId(Tender tender) {
+    public void setTender(Tender tender) {
         this.tender = tender;
     }
 
@@ -107,5 +107,4 @@ public class TenderProposal {
     public int hashCode() {
         return Objects.hash(id);
     }
-
 }

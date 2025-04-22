@@ -133,8 +133,8 @@
                     <p>${proposal.proposalDetails}</p>
                     <p>${proposal.author.login}</p>
                     <p><fmt:formatNumber value="${proposal.price}" type="currency" currencySymbol="₴"/></p>
-                    <c:if test="${user eq proposal.author}">
-                        <a href="editProposal.jsp?proposalId=${proposal.id}&id=${proposal.tenderId}" class="button">Редагувати пропозицію</a>
+                    <c:if test="${user.userId eq proposal.author.userId}">
+                        <a href="editProposal.jsp?proposalId=${proposal.id}&id=${proposal.tender.id}" class="button">Редагувати пропозицію</a>
                     </c:if>
                 </div>
             </c:forEach>

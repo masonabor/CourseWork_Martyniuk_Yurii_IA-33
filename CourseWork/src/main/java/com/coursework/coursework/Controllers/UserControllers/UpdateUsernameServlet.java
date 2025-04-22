@@ -35,6 +35,7 @@ public class UpdateUsernameServlet extends HttpServlet {
 
             if (newUsername != null && !newUsername.isEmpty() && !usersDataBase.isRegisteredUser(newUsername)) {
                 user.setLogin(newUsername);
+                usersDataBase.updateUser(user);
                 request.getSession().setAttribute("user", user);
                 request.setAttribute("usernameMessage", "Логін успішно змінений");
 

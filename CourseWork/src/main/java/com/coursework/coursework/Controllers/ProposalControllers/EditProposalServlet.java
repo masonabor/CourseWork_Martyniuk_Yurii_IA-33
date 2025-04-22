@@ -82,8 +82,10 @@ public class EditProposalServlet extends HttpServlet {
         proposal.setProposalDetails(proposalDetails);
         proposal.setPrice(price);
 
+        tendersDataBase.updateProposal(tender, proposal);
+
         User updatedUser = usersDataBase.findByLogin(user.getLogin());
-        request.setAttribute("updatedUser", updatedUser);
+        request.getSession().setAttribute("user", updatedUser);
 
         request.setAttribute("editProposalSuccess", "Тендерну пропозицію успішно оновлено");
         request.getRequestDispatcher("userAccount.jsp").forward(request, response);
@@ -119,10 +121,10 @@ public class EditProposalServlet extends HttpServlet {
 
         User user = (User) request.getSession().getAttribute("user");
         tender.deleteProposalById(proposal.getId(), user);
-        user.deleteUserProposal(proposal);
+        tendersDataBase.deleteProposal(proposal);
 
         User updatedUser = usersDataBase.findByLogin(user.getLogin());
-        request.setAttribute("updatedUser", updatedUser);
+        request.getSession().setAttribute("user", updatedUser);
 
         request.setAttribute("editProposalSuccess", "Пропозицію успішно видалено");
         request.getRequestDispatcher("userAccount.jsp").forward(request, response);

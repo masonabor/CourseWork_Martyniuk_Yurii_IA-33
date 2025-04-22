@@ -35,6 +35,7 @@ public class UpdatePasswordServlet extends HttpServlet {
 
             if (newPassword != null && !newPassword.isEmpty() && !usersDataBase.isRegisteredUser(user.getLogin())) {
                 user.setPassword(newPassword);
+                usersDataBase.updateUser(user);
                 request.getSession().setAttribute("user", user);
                 request.setAttribute("passwordMessage", "Пароль успішно змінений");
 
