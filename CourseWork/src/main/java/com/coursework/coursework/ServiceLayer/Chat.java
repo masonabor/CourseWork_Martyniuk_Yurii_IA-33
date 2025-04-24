@@ -62,5 +62,7 @@ public class Chat implements ChatInterface {
 
     public void addMessage(Message message) {
         message.setChat(this);
+        this.chat.add(message);
     }
+
 }

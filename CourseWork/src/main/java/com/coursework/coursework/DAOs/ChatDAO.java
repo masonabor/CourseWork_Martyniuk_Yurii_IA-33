@@ -4,11 +4,10 @@ import com.coursework.coursework.Interfaces.DAOsInterfaces.ChatDAOInterface;
 import com.coursework.coursework.ServiceLayer.Chat;
 import com.coursework.coursework.ServiceLayer.Message;
 import com.coursework.coursework.ServiceLayer.User;
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.hibernate.query.Query;
-
 import java.util.UUID;
 
 public class ChatDAO implements ChatDAOInterface {
@@ -21,15 +20,13 @@ public class ChatDAO implements ChatDAOInterface {
     public Chat getChatById(UUID chatId) {
         try (Session session = sessionFactory.openSession()) {
             Chat chat = session.createQuery(
-                            "SELECT DISTINCT c FROM Chat c " +
-                                    "LEFT JOIN FETCH c.users " +
-                                    "LEFT JOIN FETCH c.chat m " +
-                                    "WHERE c.chatId = :chatId", Chat.class)
+                            "SELECT c FROM Chat c WHERE c.chatId = :chatId", Chat.class)
                     .setParameter("chatId", chatId)
                     .uniqueResult();
 
             if (chat != null) {
-                chat.getChat().size();
+                Hibernate.initialize(chat.getChat());
+                Hibernate.initialize(chat.getUsers());
             }
 
             return chat;

@@ -45,7 +45,7 @@ public class WriteMessageServlet extends HttpServlet {
         Chat chat = chatsDataBase.getChatById(chatId);
         Message chatMessage = new Message(user.getLogin(), message);
         chat.addMessage(chatMessage);
-        chatsDataBase.saveMessage(chatMessage);
+        chatsDataBase.updateChat(chat);
 
         response.sendRedirect("chatPage.jsp?chatId=" + chatId);
 

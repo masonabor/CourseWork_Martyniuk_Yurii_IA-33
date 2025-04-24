@@ -3,7 +3,6 @@
 <%@ page import="com.coursework.coursework.ServiceLayer.User" %>
 <%@ page import="com.coursework.coursework.DAOs.ChatDAO" %>
 <%@ page import="com.coursework.coursework.ServiceLayer.Chat" %>
-<%@ page import="java.util.List" %>
 <%@ page import="java.util.Set" %>
 <%@ page import="java.util.stream.Collectors" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
@@ -24,9 +23,9 @@
             min-height: 100vh;
         }
         .container {
-            max-width: 800px;
-            margin: 20px auto;
-            padding: 20px;
+            max-width: 1000px;
+            margin: 20px 30%;
+            padding: 20px 20px 60px;
             background-color: #333;
             border-radius: 8px;
             flex: 1;
@@ -35,17 +34,34 @@
         }
         .messages {
             flex: 1;
-            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
             overflow-y: auto;
-            max-width: 100%;
+            width: 100%;
+            padding: 10px;
         }
         .message-item {
-            margin-bottom: 10px;
             padding: 10px;
-            background-color: #444;
-            border: 1px solid #555;
-            border-radius: 4px;
+            border-radius: 10px;
+            max-width: 60%;
             word-wrap: break-word;
+            clear: both;
+            display: inline-block;
+        }
+        .from-user {
+            background-color: #28a745;
+            color: white;
+            align-self: flex-end;
+            text-align: right;
+            border-top-right-radius: 0;
+        }
+        .from-other {
+            background-color: #444;
+            color: #ddd;
+            align-self: flex-start;
+            text-align: left;
+            border-top-left-radius: 0;
         }
         .form-container {
             width: 100%;
@@ -59,7 +75,7 @@
         }
         .form-container form {
             display: flex;
-            max-width: 800px;
+            max-width: 1000px;
             width: 100%;
         }
         .form-container input[type="text"] {
@@ -120,6 +136,7 @@
     }
 
     request.setAttribute("chat", chat);
+    request.setAttribute("userLogin", user.getLogin());
 %>
 <div class="container">
     <div class="messages">
@@ -129,9 +146,18 @@
             </c:when>
             <c:otherwise>
                 <c:forEach var="message" items="${chat.chat}">
-                    <div class="message-item">
-                        <p><strong>${message.userLogin}:</strong> ${message.message}</p>
-                    </div>
+                    <c:choose>
+                        <c:when test="${message.userLogin == userLogin}">
+                            <div class="message-item from-user">
+                                <p><strong>${message.userLogin}:</strong> ${message.message}</p>
+                            </div>
+                        </c:when>
+                        <c:otherwise>
+                            <div class="message-item from-other">
+                                <p><strong>${message.userLogin}:</strong> ${message.message}</p>
+                            </div>
+                        </c:otherwise>
+                    </c:choose>
                 </c:forEach>
             </c:otherwise>
         </c:choose>
