@@ -23,13 +23,15 @@ public class AppContextListener implements ServletContextListener {
                     .addAnnotatedClass(User.class)
                     .addAnnotatedClass(Tender.class)
                     .addAnnotatedClass(TenderProposal.class)
-                    .addAnnotatedClass(TenderReview.class);
+                    .addAnnotatedClass(TenderReview.class)
+                    .addAnnotatedClass(Chat.class)
+                    .addAnnotatedClass(Message.class);
 
             sessionFactory = config.buildSessionFactory();
 
             UsersDAO usersDAO = new UsersDAO(sessionFactory);
             TendersDAO tendersDAO = new TendersDAO(sessionFactory);
-            ChatDAO chatDAO = new ChatDAO();
+            ChatDAO chatDAO = new ChatDAO(sessionFactory);
 
             context.getServletContext().setAttribute("usersDataBase", usersDAO);
             context.getServletContext().setAttribute("tendersDataBase", tendersDAO);

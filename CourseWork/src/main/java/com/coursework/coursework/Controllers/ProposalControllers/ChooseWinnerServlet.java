@@ -2,6 +2,7 @@ package com.coursework.coursework.Controllers.ProposalControllers;
 
 import com.coursework.coursework.DAOs.ChatDAO;
 import com.coursework.coursework.DAOs.TendersDAO;
+import com.coursework.coursework.DAOs.UsersDAO;
 import com.coursework.coursework.ServiceLayer.Chat;
 import com.coursework.coursework.ServiceLayer.Tender;
 import com.coursework.coursework.ServiceLayer.TenderProposal;
@@ -18,13 +19,15 @@ import java.util.UUID;
 @WebServlet("/chooseWinner")
 public class ChooseWinnerServlet extends HttpServlet {
 
-    TendersDAO tendersDataBase;
-    ChatDAO chatsDataBase;
+    private TendersDAO tendersDataBase;
+    private ChatDAO chatsDataBase;
+    private UsersDAO usersDataBase;
 
     @Override
     public void init() {
         tendersDataBase = (TendersDAO) getServletContext().getAttribute("tendersDataBase");
         chatsDataBase = (ChatDAO) getServletContext().getAttribute("chatsDataBase");
+        usersDataBase = (UsersDAO) getServletContext().getAttribute("usersDataBase");
     }
 
     @Override
@@ -54,7 +57,7 @@ public class ChooseWinnerServlet extends HttpServlet {
 
         Tender tender = tendersDataBase.getTenderById(tenderId);
 
-        if (user != tender.getAuthor()) {
+        if (!user.getUserId().equals(tender.getAuthor().getUserId())) {
             response.sendError(400, "Ви не є власником тендеру");
             return;
         }
@@ -63,6 +66,10 @@ public class ChooseWinnerServlet extends HttpServlet {
         Chat chat = chatsDataBase.createNewChat(user, winnerProposal.getAuthor());
         winnerProposal.setChatId(chat.getChatId());
         tender.setWinnerProposal(winnerProposal);
+        tendersDataBase.updateTender(tender);
+
+        User managedUser = usersDataBase.findByLogin(user.getLogin());
+        request.getSession().setAttribute("user", managedUser);
 
         request.setAttribute("chooseWinnerSuccess", "Переможця тендеру \"" + tender.getName() + "\" успішно обрано");
         request.getRequestDispatcher("userAccount.jsp").forward(request, response);

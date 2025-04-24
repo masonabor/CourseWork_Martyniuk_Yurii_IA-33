@@ -1,20 +1,35 @@
 package com.coursework.coursework.ServiceLayer;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "messages")
 public class Message {
-    private User user;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private int id;
+
+    private String userLogin;
     private String message;
 
-    public Message(User user, String message) {
-        this.user = user;
+    @ManyToOne
+    @JoinColumn(name = "chatId")
+    private Chat chat;
+
+    public Message(String userLogin, String message) {
+        this.userLogin = userLogin;
         this.message = message;
     }
 
-    public User getUser() {
-        return user;
+    public Message() {}
+
+    public String getUserLogin() {
+        return userLogin;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUserLogin(String userLogin) {
+        this.userLogin = userLogin;
     }
 
     public String getMessage() {
@@ -23,5 +38,21 @@ public class Message {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public Chat getChat() {
+        return chat;
+    }
+
+    public void setChat(Chat chat) {
+        this.chat = chat;
     }
 }

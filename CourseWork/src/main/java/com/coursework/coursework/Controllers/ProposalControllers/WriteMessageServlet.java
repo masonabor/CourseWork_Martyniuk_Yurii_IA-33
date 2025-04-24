@@ -2,6 +2,7 @@ package com.coursework.coursework.Controllers.ProposalControllers;
 
 import com.coursework.coursework.DAOs.ChatDAO;
 import com.coursework.coursework.ServiceLayer.Chat;
+import com.coursework.coursework.ServiceLayer.Message;
 import com.coursework.coursework.ServiceLayer.User;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -42,7 +43,9 @@ public class WriteMessageServlet extends HttpServlet {
         }
 
         Chat chat = chatsDataBase.getChatById(chatId);
-        chat.addMessage(user, message);
+        Message chatMessage = new Message(user.getLogin(), message);
+        chat.addMessage(chatMessage);
+        chatsDataBase.saveMessage(chatMessage);
 
         response.sendRedirect("chatPage.jsp?chatId=" + chatId);
 

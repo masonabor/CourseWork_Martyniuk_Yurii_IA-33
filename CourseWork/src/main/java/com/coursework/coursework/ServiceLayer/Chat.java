@@ -1,21 +1,39 @@
 package com.coursework.coursework.ServiceLayer;
 
 import com.coursework.coursework.Interfaces.ModelsInterfaces.ChatInterface;
+import jakarta.persistence.*;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
-import java.util.ArrayList;
-import java.util.UUID;
+import java.util.*;
 
+@Entity
+@Table(name = "chats")
 public class Chat implements ChatInterface {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID chatId;
-    private ArrayList<Message> chat;
-    private ArrayList<User> users;
+
+    @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Fetch(FetchMode.SUBSELECT)
+    private List<Message> chat = new ArrayList<>();
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "chat_users",
+            joinColumns = @JoinColumn(name = "chat_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    @Fetch(FetchMode.SUBSELECT)
+    private Set<User> users = new HashSet<>();
 
     public Chat(User user1, User user2) {
-        this.chatId = UUID.randomUUID();
-        this.chat = new ArrayList<>();
-        this.users = new ArrayList<>();
         this.users.add(user1);
         this.users.add(user2);
+    }
+
+    public Chat() {
     }
 
     public UUID getChatId() {
@@ -26,23 +44,23 @@ public class Chat implements ChatInterface {
         this.chatId = chatId;
     }
 
-    public ArrayList<Message> getChat() {
+    public List<Message> getChat() {
         return chat;
     }
 
-    public void setChat(ArrayList<Message> chat) {
+    public void setChat(List<Message> chat) {
         this.chat = chat;
     }
 
-    public ArrayList<User> getUsers() {
+    public Set<User> getUsers() {
         return users;
     }
 
-    public void setUsers(ArrayList<User> users) {
+    public void setUsers(Set<User> users) {
         this.users = users;
     }
 
-    public void addMessage(User user, String message) {
-        chat.add(new Message(user, message));
+    public void addMessage(Message message) {
+        message.setChat(this);
     }
 }

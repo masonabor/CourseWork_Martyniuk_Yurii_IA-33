@@ -26,7 +26,5 @@ public class HomePageServlet extends HttpServlet {
         Map<UUID, Tender> tenders = tendersDataBase.getAllTenders();
         request.setAttribute("tenders", tenders);
         request.getRequestDispatcher("homePage.jsp").forward(request, response);
-
-
     }
 }

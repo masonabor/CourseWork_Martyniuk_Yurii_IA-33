@@ -12,5 +12,7 @@
         <mapping class="com.coursework.coursework.ServiceLayer.Tender"/>
         <mapping class="com.coursework.coursework.ServiceLayer.TenderProposal"/>
         <mapping class="com.coursework.coursework.ServiceLayer.TenderReview"/>
+        <mapping class="com.coursework.coursework.ServiceLayer.Chat"/>
+        <mapping class="com.coursework.coursework.ServiceLayer.Message"/>
     </session-factory>
 </hibernate-configuration>

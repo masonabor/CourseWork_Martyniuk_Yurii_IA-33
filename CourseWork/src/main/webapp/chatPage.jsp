@@ -3,6 +3,9 @@
 <%@ page import="com.coursework.coursework.ServiceLayer.User" %>
 <%@ page import="com.coursework.coursework.DAOs.ChatDAO" %>
 <%@ page import="com.coursework.coursework.ServiceLayer.Chat" %>
+<%@ page import="java.util.List" %>
+<%@ page import="java.util.Set" %>
+<%@ page import="java.util.stream.Collectors" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -106,8 +109,12 @@
     UUID chatId = UUID.fromString(id);
     ChatDAO chatsDataBase = (ChatDAO) request.getServletContext().getAttribute("chatsDataBase");
     Chat chat = chatsDataBase.getChatById(chatId);
+    Set<String> usersLogin = chat.getUsers()
+            .stream()
+            .map(User::getLogin)
+            .collect(Collectors.toSet());
 
-    if (!chat.getUsers().contains(user)) {
+    if (!usersLogin.contains(user.getLogin())) {
         response.sendError(500, "Ви не є учасником цього чату");
         return;
     }
@@ -123,7 +130,7 @@
             <c:otherwise>
                 <c:forEach var="message" items="${chat.chat}">
                     <div class="message-item">
-                        <p><strong>${message.user.login}:</strong> ${message.message}</p>
+                        <p><strong>${message.userLogin}:</strong> ${message.message}</p>
                     </div>
                 </c:forEach>
             </c:otherwise>

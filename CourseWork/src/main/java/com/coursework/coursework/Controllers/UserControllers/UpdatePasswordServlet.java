@@ -33,7 +33,7 @@ public class UpdatePasswordServlet extends HttpServlet {
 
             String newPassword = request.getParameter("newPassword");
 
-            if (newPassword != null && !newPassword.isEmpty() && !usersDataBase.isRegisteredUser(user.getLogin())) {
+            if (newPassword != null && !newPassword.isEmpty()) {
                 user.setPassword(newPassword);
                 usersDataBase.updateUser(user);
                 request.getSession().setAttribute("user", user);

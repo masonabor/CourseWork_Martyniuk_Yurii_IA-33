@@ -35,6 +35,8 @@
       transition: background-color 0.3s;
       display: inline-block;
       margin-bottom: 10px;
+      width: 135px;
+      text-align: center;
     }
     .header a:hover {
       background-color: #555;

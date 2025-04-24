@@ -141,7 +141,7 @@
                 <p><fmt:formatNumber value="${proposalEntry.price}" type="currency" currencySymbol="₴"/></p>
                 <a href="editProposal.jsp?proposalId=${proposalEntry.id}&id=${proposalEntry.tender.id}" class="button">Редагувати пропозицію</a>
                 <c:if test="${not empty proposalEntry.chatId}">
-                    <a href="chatPage.jsp?chatId=${proposalEntry.chatId}" class="button">Написати автору пропозиції</a>
+                    <a href="chatPage.jsp?chatId=${proposalEntry.chatId}" class="button">Написати автору тендеру</a>
                 </c:if>
             </div>
         </c:forEach>

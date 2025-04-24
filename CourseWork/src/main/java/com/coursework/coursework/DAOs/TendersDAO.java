@@ -41,12 +41,9 @@ public class TendersDAO implements TendersDAOInterface {
         }
     }
 
-    // Updated getTenderById method to avoid LazyInitializationException and MultipleBagFetchException
-
     @Override
     public Tender getTenderById(UUID id) {
         try (Session session = sessionFactory.openSession()) {
-            // Step 1: Fetch Tender with its Author and Proposals (with Author)
             Tender tender = session.createQuery(
                             "SELECT t FROM Tender t " +
                                     "LEFT JOIN FETCH t.author " +
@@ -57,7 +54,6 @@ public class TendersDAO implements TendersDAOInterface {
                     .setParameter("id", id)
                     .uniqueResult();
 
-            // Step 2: If Tender exists, fetch reviews separately
             if (tender != null) {
                 tender.setTenderReviews(
                         new HashSet<>(
